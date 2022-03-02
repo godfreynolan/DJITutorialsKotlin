@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Back"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/back_btn"
+        android:text="Delete"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/reload_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/delete_btn"
+        android:text="Reload"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/download_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/reload_btn"
+        android:text="Download"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/status_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/download_btn"
+        android:text="Status"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/play_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/back_btn"
+        android:text="Play"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/resume_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/back_btn"
+        android:layout_toEndOf="@+id/play_btn"
+        android:text="Resume"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/pause_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/reload_btn"
+        android:layout_toEndOf="@+id/resume_btn"
+        android:text="Pause"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/stop_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/reload_btn"
+        android:layout_toEndOf="@+id/pause_btn"
+        android:text="Stop"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/moveTo_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/reload_btn"
+        android:layout_toEndOf="@+id/stop_btn"
+        android:text="MoveTo"
+        android:textSize="11sp" />
+
+    <!-- Widget to see first person view (FPV) -->
+    <dji.ux.widget.FPVWidget
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/play_btn"
+        android:layout_toStartOf="@+id/pointing_drawer_sd"
+        android:id="@+id/FPVWidget" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/play_btn"
+        android:layout_marginTop="0dp"
+        android:layout_toStartOf="@+id/pointing_drawer_sd"
+        android:background="@color/black_overlay"
+        android:visibility="invisible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/filelistView"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_toEndOf="@+id/FPVWidget" />
+
+    <SlidingDrawer
+        android:id="@+id/pointing_drawer_sd"
+        android:layout_width="230dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:content="@+id/pointing_drawer_content"
+        android:handle="@+id/pointing_handle"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@id/pointing_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:id="@+id/pointing_drawer_content"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="340dp"
+            android:background="@color/black_overlay">
+
+            <ScrollView
+                android:layout_width="250dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="-5dp"
+                android:layout_marginRight="-5dp"
+                android:clickable="false"
+                android:scrollbars="vertical">
+
+                <TextView
+                    android:id="@+id/pointing_push_tv"
+                    style="@style/status_text"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:scrollbars="vertical"
+                    android:text="@string/push_info" />
+            </ScrollView>
+        </RelativeLayout>
+
+    </SlidingDrawer>
+
+</RelativeLayout>

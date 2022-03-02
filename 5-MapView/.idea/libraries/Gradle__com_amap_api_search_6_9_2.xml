@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amap.api:search:6.9.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amap.api/search/6.9.2/132a131581f07a963e892608d660e23500e8eed2/search-6.9.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amap.api/search/6.9.2/4af21945f590cb6d365fe4d2b05180925b1838de/search-6.9.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amap.api/search/6.9.2/4af21945f590cb6d365fe4d2b05180925b1838de/search-6.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

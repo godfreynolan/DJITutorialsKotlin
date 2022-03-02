@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="left_button_list_button">
+        <item name="android:minHeight">@dimen/left_button_list_button_height</item>
+        <item name="android:layout_width">@dimen/left_button_list_button_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/left_button_list_button_padding_left</item>
+        <item name="android:paddingRight">@dimen/left_button_list_button_padding_right</item>
+        <item name="android:layout_marginLeft">@dimen/left_button_list_button_margin_left</item>
+        <item name="android:layout_marginTop">@dimen/left_button_list_button_margin_top</item>
+        <item name="android:background">@drawable/selector_button</item>
+        <item name="android:textSize">@dimen/left_button_list_button_text_size</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>

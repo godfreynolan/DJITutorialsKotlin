@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Kotlin-Phantom4Missions</string>
+    <string name="title_activity_pointing_test">TapFly Sample</string>
+    <string name="title_activity_tracking_test">ActiveTrack Sample</string>
+    <string name="push_info">Push Info</string>
+    <string name="title_activity_mainactivity">P4MissionsDemo</string>
+    <string name="demo_desc_tracking">ActiveTrack Mission</string>
+    <string name="demo_desc_pointing">TapFly Mission</string>
+    <string name="popup_picker_finish">Finish</string>
+    <string name="popup_picker_trigger">Trigger</string>
+
+</resources>

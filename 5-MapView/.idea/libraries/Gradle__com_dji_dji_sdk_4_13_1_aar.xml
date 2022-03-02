@@ -1,0 +1,38 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dji:dji-sdk:4.13.1@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/dji-reactive-streams-1.0.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/dji-rxjava-1.1.3.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/sqlcipher.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/sqlbrite-0.6.2.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/adapter-rxjava2-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/rxjava-computation-expressions-0.21.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/converter-gson-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/retrofit-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/rxandroid-1.1.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/jars/libs/logging-interceptor-3.6.0.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ec3e8b9fb3d3d864a9426ddada15e05e/jetified-dji-sdk-4.13.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/dji-rxjava-1.1.3.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/adapter-rxjava2-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/logging-interceptor-3.6.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/rxandroid-1.1.0.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/retrofit-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/sqlbrite-0.6.2.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/converter-gson-2.2.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/rxjava-computation-expressions-0.21.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/dji-reactive-streams-1.0.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/30ac8b54eccb8db0fdf3fe0008700e8c/jetified-dji-sdk-4.13.1/jars/libs/sqlcipher.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

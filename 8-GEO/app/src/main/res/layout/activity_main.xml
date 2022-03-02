@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/main_title_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@color/title_dark">
+
+        <ImageButton
+            android:id="@+id/ReturnBtnCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="onReturn"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_back_button" />
+
+        <TextView
+            android:id="@+id/ConnectStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="GEODemo"
+            android:textColor="@android:color/white"
+            android:textSize="21sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/map" />
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/geo_login_btn"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_login"/>
+
+                <Button
+                    android:id="@+id/geo_logout_btn"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_logout"/>
+
+                <Button
+                    android:id="@+id/geo_unlock_nfzs_btn"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_unlock_nfzs"/>
+
+                <Button
+                    style="@style/left_button_list_button"
+                    android:id="@+id/geo_get_unlock_nfzs_btn"
+                    android:text="@string/geo_get_unlock_nfzs" />
+
+                <Button
+                    style="@style/left_button_list_button"
+                    android:id="@+id/geo_get_surrounding_nfz_btn"
+                    android:text="@string/geo_get_surrounding_nfz" />
+
+                <Button
+                    android:id="@+id/geo_reload_unlocked_zone_groups_from_server"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_reload_unlocked_zone_groups_from_server"/>
+
+                <Button
+                    android:id="@+id/geo_sync_unlocked_zone_group_to_aircraft"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_sync_unlocked_zone_group_to_aircraft"/>
+
+                <Button
+                    android:id="@+id/geo_get_loaded_unlocked_zone_groups"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_get_loaded_unlocked_zone_groups"/>
+
+                <Button
+                    android:id="@+id/geo_update_location_btn"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_update_location" />
+
+                <Button
+                    android:id="@+id/geo_load_custom_unlock_zones"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_load_custom_unlock_zones"/>
+
+                <Button
+                    android:id="@+id/geo_get_custom_unlock_zones"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_get_custom_unlock_zones"/>
+
+                <Button
+                    android:id="@+id/geo_enable_custom_unlock_zone"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_enable_custom_unlock_zone"/>
+
+                <Button
+                    android:id="@+id/geo_disable_custom_unlock_zone"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_disable_custom_unlock_zone"/>
+
+                <Button
+                    android:id="@+id/geo_get_enabled_custom_unlock_zone"
+                    style="@style/left_button_list_button"
+                    android:text="@string/geo_get_enabled_custom_unlock_zone"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/login_status"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:textAlignment="center" />
+
+        <ScrollView
+            android:layout_width="180dp"
+            android:layout_height="400dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="vertical"
+            android:background="@color/button_normal"
+            android:layout_below="@+id/login_status">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:id="@+id/fly_zone_tv" />
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</LinearLayout>

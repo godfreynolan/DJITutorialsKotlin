@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Kotlin-SimulatorDemo</string>
+    <string name="view_virtual_stick">VirtualStickView</string>
+    <string name="sdk_registration_message">SDK Registration Failed. Please check the bundle ID and your network connectivity</string>
+    <string name="success">Success</string>
+</resources>

@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">DJIGeoDemo-Kotlin</string>
+    <string name="title_activity_GEODemo">GEODemo</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="product_information">Product Information</string>
+    <string name="connection_loose">Status: No Product Connected</string>
+    <string name="sdk_version">DJI SDK Version: %1$s</string>
+    <string name="model_not_available">Model not Available</string>
+
+    <!-- GEO with map testing activity-->
+    <string name="title_activity_geo_with_map_testing">GeoWithMapTestingActivity</string>
+    <string name="demo_desc_geo_with_map">Geo System With Map</string>
+
+    <string name="item_top_left_title">Category</string>
+    <string name="item_top_title">EventName</string>
+    <string name="Message_WaitStatus">Upload Status</string>
+
+    <string name="title_activity_geo_testing">GeoTestingActivity</string>
+    <string name="demo_desc_geo">Geo System</string>
+    <string name="geo_get_surrounding_nfz">Get Surrounding NFZ</string>
+    <string name="geo_get_location_nfz">Get location NFZ</string>
+    <string name="geo_get_unlock_nfz">Get Unlock NFZ</string>
+    <string name="geo_refresh_nfz">Refresh Local Data</string>
+    <string name="geo_unlock_nfzs">Unlock NFZs</string>
+    <string name="geo_get_unlock_nfzs">Get Unlock NFZs</string>
+    <string name="geo_reload_unlocked_zone_groups_from_server">Reload Unlocked Zone Groups from Server</string>
+    <string name="geo_sync_unlocked_zone_group_to_aircraft">Sync Unlocked Zone Group to Aircraft</string>
+    <string name="geo_get_loaded_unlocked_zone_groups">Get Loaded Unlocked Zone Groups</string>
+    <string name="geo_login">Login</string>
+    <string name="geo_logout">Logout</string>
+    <string name="enabled_geo">Enabled GEO</string>
+    <string name="start_simulator">Start Simulator</string>
+    <string name="stop_simulator">Stop Simulator</string>
+    <string name="geo_set_geo_enabled">Set GEO Enabled</string>
+    <string name="geo_get_geo_enabled">Get GEO Enabled</string>
+    <string name="flysafe_clear_text">Clear Text</string>
+    <string name="geo_update_location">Update Location</string>
+    <string name="geo_load_custom_unlock_zones">Load Custom Unlock Zones from server</string>
+    <string name="geo_get_custom_unlock_zones">Get Custom Unlock Zones</string>
+    <string name="geo_enable_custom_unlock_zone">Enable Custom Unlock Zone</string>
+    <string name="geo_disable_custom_unlock_zone">Disable Custom Unlock Zone</string>
+    <string name="geo_get_enabled_custom_unlock_zone">Get Enabled Custom Unlock Zone</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoicmVlZHlqdzEiLCJhIjoiY2twNDBiYTMyMDdqbDJubXV6c2ttcmV6YiJ9.6is-U-4Ee_KtGkBz0gJ6XA</string>
+</resources>

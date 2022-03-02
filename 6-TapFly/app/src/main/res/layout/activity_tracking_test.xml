@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <RelativeLayout
+            android:id="@+id/main_title_rl"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@android:color/black">
+
+        <ImageButton
+                android:id="@+id/ReturnBtnMain"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="onReturn"
+                android:scaleType="centerInside"
+                android:src="@drawable/selector_back_button" />
+
+        <TextView
+                android:id="@+id/ConnectStatusTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/title_activity_tracking_test"
+                android:textColor="@android:color/white"
+                android:textSize="21sp" />
+
+        <ImageButton
+                android:id="@+id/tracking_drawer_control_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:background="#ff000000"
+                android:src="@drawable/mission_other_icon" />
+    </RelativeLayout>
+
+    <TextureView
+            android:id="@+id/video_previewer_surface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/main_title_rl"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center" />
+
+    <ImageView
+            android:id="@+id/tracking_send_rect_iv"
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/black_rectangle"
+            android:visibility="invisible" />
+
+    <ImageView
+            android:id="@+id/tracking_rst_rect_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/visual_track_lowconfidence"
+            android:visibility="invisible" />
+
+    <RelativeLayout
+            android:id="@+id/tracking_bg_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main_title_rl">
+
+        <LinearLayout
+                android:id="@+id/set_enable_bg_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="2dp"
+                android:layout_toRightOf="@id/recommended_configuration_btn"
+                android:orientation="horizontal">
+
+            <LinearLayout
+                    android:id="@+id/set_autosensing_bg_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="MultiTrackingEnable"
+                        android:textColor="@color/white" />
+
+                <Switch
+                        android:id="@+id/set_multitracking_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_gravity="center" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/set_quickshot_bg_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="1dp">
+
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="QuickShotEnable"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white" />
+
+                <Switch
+                        android:id="@+id/set_multiquickshot_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="1dp">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RetreatEnable"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white" />
+
+                <Switch
+                        android:id="@+id/tracking_pull_back_tb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="1dp">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="GestureMode"
+                        android:textColor="@color/white" />
+
+                <Switch
+                        android:id="@+id/tracking_in_gesture_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <Button
+                android:id="@+id/confirm_btn"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/tracking_stop_btn"
+                android:text="A"
+                android:visibility="invisible" />
+
+        <ImageButton
+                android:id="@+id/tracking_stop_btn"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/reject_btn"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/mission_stop"
+                android:text="Stop"
+                android:visibility="invisible" />
+
+        <Button
+                android:id="@+id/reject_btn"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/set_enable_bg_layout"
+                android:layout_marginBottom="40dp"
+                android:text="R"
+                android:visibility="invisible" />
+
+        <Button
+                android:id="@+id/recommended_configuration_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Config" />
+
+    </RelativeLayout>
+
+
+    <SlidingDrawer
+            android:id="@+id/tracking_drawer_sd"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/main_title_rl"
+            android:layout_alignParentRight="true"
+            android:content="@+id/tracking_drawer_content_rl"
+            android:handle="@+id/tracking_handle"
+            android:orientation="horizontal">
+
+        <ImageView
+                android:id="@id/tracking_handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        <RelativeLayout
+                android:id="@id/tracking_drawer_content_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/main_title_rl"
+                android:layout_centerInParent="true">
+
+            <ScrollView
+                    android:id="@+id/test_scrollview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"
+                    android:fillViewport="true"
+                    android:scrollbars="vertical">
+
+                <TextView
+                        android:id="@+id/tracking_push_tv"
+                        style="@style/test_text"
+                        android:layout_width="210dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/push_info" />
+            </ScrollView>
+
+        </RelativeLayout>
+
+    </SlidingDrawer>
+
+</RelativeLayout>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GSDemo-Kotlin</string>
+    <string name="action_settings">Settings</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="product_information">Product Information</string>
+    <string name="connection_loose">Status: No Product Connected</string>
+    <string name="model_not_available">Model Not Available</string>
+    <string name="push_info">Push Info</string>
+    <string name="sdk_version">DJI SDK Version: %1$s</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoicmVlZHlqdzEiLCJhIjoiY2twNDBiYTMyMDdqbDJubXV6c2ttcmV6YiJ9.6is-U-4Ee_KtGkBz0gJ6XA</string>
+</resources>

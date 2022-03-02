@@ -1,0 +1,180 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <RelativeLayout
+            android:id="@+id/main_title_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="@android:color/black">
+
+        <ImageButton
+                android:id="@+id/ReturnBtnMain"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="onReturn"
+                android:scaleType="centerInside" />
+
+        <TextView
+                android:id="@+id/ConnectStatusTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/title_activity_pointing_test"
+                android:textColor="@color/white"
+                android:textSize="21sp" />
+
+        <ImageButton
+                android:id="@+id/pointing_drawer_control_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/mission_other_icon"
+                android:background="#ff000000" />
+    </RelativeLayout>
+
+    <TextureView
+            android:id="@+id/video_previewer_surface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/main_title_rl"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center" />
+
+
+    <SlidingDrawer
+            android:id="@+id/pointing_drawer_sd"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/main_title_rl"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:content="@+id/pointing_drawer_content_rl"
+            android:handle="@+id/pointing_handle">
+
+        <ImageView
+                android:id="@id/pointing_handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        <RelativeLayout
+                android:id="@id/pointing_drawer_content_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/main_title_rl"
+                android:layout_centerInParent="true">
+
+            <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"
+                    android:scrollbars="vertical">
+
+                <TextView
+                        android:id="@+id/pointing_push_tv"
+                        style="@style/test_text"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"
+                        android:text="@string/push_info" />
+            </ScrollView>
+        </RelativeLayout>
+    </SlidingDrawer>
+
+    <RelativeLayout
+            android:layout_below="@+id/main_title_rl"
+            android:id="@+id/pointing_bg_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+        <Button
+                android:id="@+id/pointing_start_btn"
+                android:background="@drawable/pointing_start"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:textSize="24sp"
+                android:visibility="invisible"
+                android:text="GO" />
+
+        <ImageView
+                android:id="@+id/pointing_rst_point_iv"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="invisible"
+                android:src="@drawable/visual_point_now" />
+
+        <ImageButton
+                android:id="@+id/pointing_stop_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp"
+                android:background="#00000000"
+                android:visibility="invisible"
+                android:src="@drawable/mission_stop" />
+
+        <TextView
+                android:id="@+id/pointing_assistant_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Horizontal Obstacle Avoidance Enabled"
+                android:layout_toStartOf="@+id/textView" />
+
+        <Switch
+                android:id="@+id/pointing_assistant_sw"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/pointing_assistant_tv"
+                android:layout_below="@id/pointing_assistant_tv"
+                android:checked="true"
+                android:text="" />
+
+        <SeekBar
+                android:id="@+id/pointing_speed_sb"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:max="9"
+                android:progress="1" />
+
+        <TextView
+                style="@style/test_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:textSize="24sp"
+                android:layout_toLeftOf="@id/pointing_speed_sb"
+                android:text="Speed"
+                android:id="@+id/textView" />
+
+        <TextView
+                style="@style/test_text"
+                android:id="@+id/pointing_speed_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/pointing_speed_sb"
+                android:textSize="24sp"
+                android:text="2" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

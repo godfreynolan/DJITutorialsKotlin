@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapzen.android:lost:3.0.4@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/14713a7443e9e0e88a3c81c5b0a7475c/jetified-lost-3.0.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/14713a7443e9e0e88a3c81c5b0a7475c/jetified-lost-3.0.4/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/14713a7443e9e0e88a3c81c5b0a7475c/jetified-lost-3.0.4/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/16810e2cd2bc33778ce443288418e704/jetified-lost-3.0.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/16810e2cd2bc33778ce443288418e704/jetified-lost-3.0.4/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/16810e2cd2bc33778ce443288418e704/jetified-lost-3.0.4/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapzen.android/lost/3.0.4/ee1bca54220becc41c30e8ba362f289b9f3424ca/lost-3.0.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapzen.android/lost/3.0.4/64183480c0a48f9aed168bebff4ccc7eda15d5f/lost-3.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
