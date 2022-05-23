@@ -50,7 +50,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.riis.livestream'
+        applicationId 'com.dji.importsdkdemo'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
