@@ -6,7 +6,7 @@
 
 This tutorial is designed for you to gain a basic understanding of the DJI Mobile SDK. It will implement the FPV view and two basic camera functionalities: Take Photo and Record video.
 
-You can download the tutorial's final sample project from this [Github Page](https://github.com/riisinterns/drone-lab-three-camera-demo).
+You can download the tutorial's final sample project from this [Github Page](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/1-Registration).
 
 ---
 ### Application Activation and Aircraft Binding in China
@@ -43,7 +43,7 @@ Throughout this tutorial we will be using Android Studio Bumblebee | 2021.1.1. Y
     * Click **Finish** to create the project.
 
 #### 2. Import Maven Dependency
-In our previous tutorial, [Importing and Activating DJI SDK](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) in Android Studio Project, you have learned how to import the Android SDK Maven Dependency and activate your application. If you haven't read that previously, please take a look at it and implement the related features. Once you've done that, continue to implement the next features.
+In our previous tutorial, [Importing and Activating DJI SDK](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/1-Registration) in Android Studio Project, you have learned how to import the Android SDK Maven Dependency and activate your application. If you haven't read that previously, please take a look at it and implement the related features. Once you've done that, continue to implement the next features.
 
 ---
 ### Building the Layouts of Activity
@@ -852,7 +852,7 @@ Here, we implement several features:
 Once you finish the above steps, let's copy all the images (xml files) from this Github project's drawable folder (**app -> res -> drawable**) to the same folder in your project.
 
 <p align="center">
-   <img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/lab3_drawables_android_studio_screen_shot.PNG" width="30%" height="30%">
+   <img src="../images/lab3_drawables_android_studio_screen_shot.PNG" width="30%" height="30%">
 </p>
 
 Moreover, open the `colors.xml` file and update the content as shown below:
@@ -980,10 +980,10 @@ In the code above, we add the attributes of `android:screenOrientation` to set "
 Congratulations! Your Aerial FPV android app is complete, you can now use this app to control the camera of your DJI Product now.
 
 #### Connection Activity 
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/Videos/demo.gif" alt="drawing" width="30%" height="30%"/>
+<img src="../Videos/demo.gif" alt="drawing" width="30%" height="30%"/>
 
 #### Main Activity (FPV Screen)
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/Videos/demo2.gif" alt="drawing" width="60%" height="60%"/>
+<img src="../Videos/demo2.gif" alt="drawing" width="60%" height="60%"/>
 
 ---
 ### Connecting to the Aircraft or Handheld Device
@@ -1002,22 +1002,22 @@ Please check this [Connect Mobile Device and Run Application](https://developer.
 
 #### Main Activity (FPV Screen)
 *    Normal:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230002_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230002_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
      
 *    Switching Camera Mode:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230011_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230011_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
      
 *    Capturing Photo:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230021_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230021_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
      
 *    Video Recording Started:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230040_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230040_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
      
 *    Video Recording in Progress:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230046_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230046_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
      
 *    Video Recording Stopped:
-<img src="https://github.com/riisinterns/drone-lab-three-camera-demo/blob/main/images/screenshot_20220301-230118_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
+<img src="../images/screenshot_20220301-230118_djifpv-kotlin.jpg" alt="drawing" width="60%" height="60%"/>
 
 ---
 ### Summary
