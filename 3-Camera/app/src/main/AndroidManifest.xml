@@ -46,7 +46,7 @@
             android:required="false" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="Please enter your APP Key here." />
+            android:value="4d103048c2fa9145db524bf0" />
         <!-- DJI SDK -->
 
         <activity android:name="com.riis.fpv.ConnectionActivity"
@@ -66,6 +66,9 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
         </activity>
 
         <activity android:name="com.riis.fpv.MainActivity"
