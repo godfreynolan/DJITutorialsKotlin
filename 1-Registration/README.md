@@ -32,7 +32,7 @@ This application will be used solely to demonstrate how to integrate the DJI And
   <img src="guide/selection_page.PNG">
  </p>
 
-> **Note:** **Package name** is the identifying string required to [generate an App Key](../quick-start/index.html#Generate-an-App-Key). The activity java, manifest xml and Gradle script code below assumes **Package name** is "com.dji.importsdkdemo"
+> **Note:** **Package name** is the identifying string required to [generate an App Key](https://developer.dji.com/windows-sdk/documentation/quick-start/index.html#generate-an-app-key). The activity java, manifest xml and Gradle script code below assumes **Package name** is "com.dji.importsdkdemo"
 
 
 ### Configure the Gradle Script
