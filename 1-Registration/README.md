@@ -17,7 +17,7 @@ This application will be used solely to demonstrate how to integrate the DJI And
     *   Set the template to **"Empty Activity"** and then press **"Next"**.
 
 <p "center">
-  <img src="guide/empty_activity_selection.png">
+  <img src="guide/empty_activity_selection.PNG>
  </p>
 
 *   On the next screen:
@@ -29,7 +29,7 @@ This application will be used solely to demonstrate how to integrate the DJI And
     * Click **Finish** to create the project.
 
 <p "center">
-  <img src="guide/selection_page2.PNG">
+  <img src="guide/selection_page2.png">
  </p>
 
 > **Note:** **Package name** is the identifying string required to [generate an App Key](https://developer.dji.com/windows-sdk/documentation/quick-start/index.html#generate-an-app-key). The activity java, manifest xml and Gradle script code below assumes **Package name** is "com.riis.kotlin_importandactivatesdkinandroidstudio"
