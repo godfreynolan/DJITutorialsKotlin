@@ -171,7 +171,7 @@ task clean(type: Delete) {
 Then, finally make sure in your settings.gradle you only have
 
 ```gradle
-rootProject.name = "ImportSDKDemo"
+rootProject.name = "Kotlin-ImportAndActivateSDKInAndroidStudio"
 include ':app'
 ```
 
