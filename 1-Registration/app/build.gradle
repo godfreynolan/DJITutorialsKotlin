@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.riis.livestream'
+        applicationId 'com.riis.kotlin_importandactivatesdkinandroidstudio'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
