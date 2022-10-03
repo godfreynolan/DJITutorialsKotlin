@@ -48,7 +48,162 @@ Throughout this tutorial we will be using Android Studio Bumblebee | 2021.1.1. Y
 
 #### 2. Import Maven Dependency
 
-Please check the [Importing and Activating DJI SDK](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the DJI Android UX SDK Maven Dependency to your project. If you haven't read that previously, please take a look at it and implement the related features. Once you've done that, continue to implement the next features.
+Please check the [Importing and Activating DJI SDK](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/1-Registration) tutorial to learn how to import the DJI Android UX SDK Maven Dependency to your project. If you haven't read that previously, please take a look at it.
+
+#### build.gradle (Project)
+Please **replace everything** in the `build.gradle (Project)` with
+```
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+#### build.gradle (Module)
+Please **replace everything** in `build.gradle (Module)` with 
+```
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId 'com.riis.mediamanagerdemo'
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        multiDexEnabled true
+        versionName "1.0"
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    //DJI Dependencies
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation ('com.dji:dji-sdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    implementation ('com.dji:dji-uxsdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    compileOnly ('com.dji:dji-sdk-provided:4.16')
+
+    // ViewModels and Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.fragment:fragment-ktx:1.2.4")
+
+
+    //Default
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+
+}
+
+// Please uncomment the following code if you use your own sdk version.
+//apply from : "https://terra-1-g.djicdn.com/71a7d383e71a4fb8887a310eb746b47f/msdk/Android-CommonConfig/config_sample_all.gradle"
+```
+
+#### Android Jetifier
+Please **add** the following line to the `gradle.properties` file
+```
+android.enableJetifier=true
+```
+
+#### settings.gradle
+Please **replace everything** in the `settings.gradle` with
+```
+rootProject.name = "Kotlin-MediaManagerDemo"
+include ':app'
+```
 
 ---
 ### Building the Layouts of Activity
@@ -1258,8 +1413,34 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 }
 ```
+#### 6. Default Layout Activity
+In the project navigator, go to **app -> java -> com -> riis -> kotlin_mediamanagerdemo**, and right-click on the kotlin_mediamanagerdemo directory. Select **New -> Kotlin Class/File** to create a new kotlin class and name it as `DefaultLayoutActivity.kt`. 
 
-#### 6.  Implementing the MainActivity Layout
+Next, replace the code of the `DefaultLayoutActicity.kt` file with the following:
+```kotlin
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import com.riis.kotlin_mediamanagerdemo.R
+
+class DefaultLayoutActivity : AppCompatActivity() {
+
+    private lateinit var mediaManagerBtn: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_default_layout)
+
+        mediaManagerBtn = findViewById(R.id.btn_mediaManager)
+        mediaManagerBtn.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+    }
+}
+```
+
+#### 7.  Implementing the MainActivity Layout
 
 Open the `activity_main.xml` layout file and replace the code with the following:
 
@@ -1434,7 +1615,216 @@ Open the `activity_main.xml` layout file and replace the code with the following
 
 </RelativeLayout>
 ```
-#### 7. Creating the media_info_item.xml layout
+#### 8. Creating the activity_default_layout.xml layout
+
+In the project file navigator, go to **app -> res -> layout** and right-click on the layout directory. Select **New -> Layout Resource File** to create a xml file and name it as `activity_default_layout.xml`. Copy the following code into it:
+```xml
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_blue"
+    android:orientation="horizontal"
+    tools:context=".MainActivity">
+
+    <!-- Widget to see first person view (FPV) -->
+    <dji.ux.widget.FPVWidget
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <dji.ux.widget.FPVOverlayWidget
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- Widgets in top status bar -->
+    <LinearLayout
+        android:id="@+id/signal"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:background="@color/dark_gray"
+        android:orientation="horizontal">
+
+        <dji.ux.widget.PreFlightStatusWidget
+            android:id="@+id/status"
+            android:layout_width="238dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.FlightModeWidget
+            android:layout_width="103dp"
+            android:layout_height="22dp"/>
+
+        <dji.ux.widget.GPSSignalWidget
+            android:layout_width="44dp"
+            android:layout_height="22dp"/>
+
+        <dji.ux.widget.VisionWidget
+            android:layout_width="22dp"
+            android:layout_height="22dp"/>
+
+        <dji.ux.widget.RemoteControlSignalWidget
+            android:layout_width="38dp"
+            android:layout_height="22dp"/>
+
+        <dji.ux.widget.VideoSignalWidget
+            android:layout_width="38dp"
+            android:layout_height="22dp"/>
+
+        <dji.ux.widget.WiFiSignalWidget
+            android:layout_width="32dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.BatteryWidget
+            android:layout_width="96dp"
+            android:layout_height="22dp"
+            custom:excludeView="singleVoltage"/>
+
+        <dji.ux.widget.ConnectionWidget
+            android:layout_marginTop="3dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signal"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="12dp"
+        android:background="@color/dark_gray"
+        android:orientation="horizontal">
+
+        <dji.ux.widget.AutoExposureLockWidget
+            android:layout_width="25dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.FocusExposureSwitchWidget
+            android:layout_width="25dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.FocusModeWidget
+            android:layout_width="25dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigISOAndEIWidget
+            android:layout_width="50dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigShutterWidget
+            android:layout_width="50dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigApertureWidget
+            android:layout_width="50dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigEVWidget
+            android:layout_width="50dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigWBWidget
+            android:layout_width="50dp"
+            android:layout_height="25dp"/>
+
+        <dji.ux.widget.config.CameraConfigStorageWidget
+            android:layout_width="108dp"
+            android:layout_height="25dp"/>
+
+    </LinearLayout>
+    <dji.ux.widget.RemainingFlightTimeWidget
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="18dp"
+        android:layout_width="match_parent"
+        android:background="@color/transparent"
+        android:layout_height="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <dji.ux.widget.dashboard.DashboardWidget
+            android:id="@+id/Compass"
+            android:layout_width="405dp"
+            android:layout_height="91dp"
+            android:layout_marginRight="12dp"/>
+
+    </LinearLayout>
+
+    <!--Take off and return home buttons on left -->
+    <LinearLayout
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <dji.ux.widget.TakeOffWidget
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="12dp"/>
+
+        <dji.ux.widget.ReturnHomeWidget
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"/>
+    </LinearLayout>
+
+
+    <dji.ux.widget.controls.CameraControlsWidget
+        android:id="@+id/CameraCapturePanel"
+        android:layout_width="50dp"
+        android:layout_height="213dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/camera" />
+
+
+    <dji.ux.panel.CameraSettingExposurePanel
+        android:id="@+id/CameraExposureMode"
+        android:layout_width="180dp"
+        android:layout_height="263dp"
+        android:layout_below="@id/camera"
+        android:layout_marginLeft="360dp"
+        android:layout_toLeftOf="@+id/CameraCapturePanel"
+        android:background="@color/transparent"
+        android:gravity="center"
+        android:visibility="invisible" />
+
+    <dji.ux.panel.CameraSettingAdvancedPanel
+        android:id="@+id/CameraAdvancedSetting"
+        android:layout_width="180dp"
+        android:layout_height="263dp"
+        android:layout_below="@id/camera"
+        android:layout_marginLeft="360dp"
+        android:layout_toLeftOf="@+id/CameraCapturePanel"
+        android:background="@color/transparent"
+        android:gravity="center"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_mediaManager"
+        android:layout_width="38dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/CameraCapturePanel"
+        android:layout_below="@id/CameraCapturePanel"
+        android:background="@drawable/playback"
+        android:visibility="visible" />
+
+    <!-- Pre-flight checklist panel -->
+    <dji.ux.panel.PreFlightCheckListPanel
+        android:id="@+id/PreflightCheckView"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signal"
+        android:visibility="gone"/>
+</RelativeLayout>
+```
+
+#### 9. Creating the media_info_item.xml layout
 
 In the project file navigator, go to **app -> res -> layout** and right-click on the layout directory. Select **New -> Layout Resource File** to create a xml file and name it as `media_info_item.xml`. Copy the following code into it:
 
@@ -1496,7 +1886,7 @@ In the project file navigator, go to **app -> res -> layout** and right-click on
 
 </RelativeLayout>
 ```
-#### 8. Creating the prompt_input_position.xml layout
+#### 10. Creating the prompt_input_position.xml layout
 
 In the project file navigator, go to **app -> res -> layout** and right-click on the layout directory. Select **New -> Layout Resource File** to create a xml file and name it as `prompt_input_position.xml`. Copy the following code into it:
 
@@ -1528,13 +1918,9 @@ In the project file navigator, go to **app -> res -> layout** and right-click on
 
 </LinearLayout>
 ```
-#### 9. Configuring the Resource XMLs
+#### 11. Configuring the Resource XMLs
 
-Once you finish the above steps, let's copy all the images (xml files) from this Github project's drawable folder (**app -> res -> drawable**) to the same folder in your project.
-
-<p align="center">
-   <img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/DJI%20Lab4%20drawables.PNG" width="30%" height="30%">
-</p>
+Once you finish the above steps, let's configure some xml files that our app is going to use.
 
 Moreover, open the `colors.xml` file and update the content as shown below:
 ```xml
@@ -1567,7 +1953,7 @@ Furthermore, open the `strings.xml` file and replace the content with the follow
     <string name="sdk_version">DJI SDK Version: %1$s</string>
 </resources>
 ```
-Lastly, open the `styles.xml` file and replace the content with the following:
+Lastly, right click on `/app/res/values` folder and create new `Values Resource File`. Name it **styles.xml** and press **OK**. Place the the following inside the:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -1580,6 +1966,60 @@ Lastly, open the `styles.xml` file and replace the content with the following:
         <item name="android:textColor">@color/white</item>
     </style>
 </resources>
+```
+
+#### 12. Adding Drawable Resources
+1. Create a new `Drawable Resource File` under `/app/res/drawable` and name it `round_btn.xml`. Place the following code inside.
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/round_btn_normal" android:state_focused="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_selected="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_pressed="true"></item>
+    <item android:drawable="@drawable/round_btn_disable" android:state_enabled="false"></item>
+    <item android:drawable="@drawable/round_btn_normal" ></item>
+</selector>
+```
+2. Create another `Drawable Resource File` under `/app/res/drawable` and name it `round_btn_disable.xml`. Place the following code inside
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AAAAAAAA" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+3. Create another `Drawable Resource File` under `/app/res/drawable` and name it `round_btn_normal.xml`. Place the following code inside
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF314268" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+4. Create another `Drawable Resource File` under `/app/res/drawable` and name it `round_btn_pressed.xml`. Place the following code inside
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AA314268" />
+    <corners android:topLeftRadius="10dp"
+             android:topRightRadius="10dp"
+             android:bottomRightRadius="10dp"
+             android:bottomLeftRadius="10dp"/>
+</shape>
+```
+5. Create another `Drawable Resource File` under `/app/res/drawable` and name it `background_selector.xml`. Place the following code inside
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/blue" android:state_pressed="false" android:state_selected="true" />
+    <item android:drawable="@android:color/white" android:state_selected="false" />
+</selector>
 ```
 ---
 ### Registering the Application
@@ -1668,7 +2108,7 @@ After you finish the above steps, let's register our application with the App Ke
 </manifest>
 ```
 
-2. All that is left is to add the accessory filter file to the project. With this file, the app can determine what devices are being plugged into the Android phone. Create a new `Directory` under `app/res/` called **xml**. Then, right click the newly created folder and create a new `XML Resource File` called **accessory_filter.xml**. Then press **OK**. Inside this resource file, replace all pre-existing code with the following code. The user will now be prompted to open the app when DJI controllers are plugged in.
+2. All that is left is to add the accessory filter file to the project. With this file, the app can determine what devices are being plugged into the Android phone. Create a new `Directory` under `app/res/` called **xml** if one has not already been made. Then, right click the newly created folder and create a new `XML Resource File` called **accessory_filter.xml**. Then press **OK**. Inside this resource file, replace all pre-existing code with the following code. The user will now be prompted to open the app when DJI controllers are plugged in.
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
