@@ -17,7 +17,7 @@ This application will be used solely to demonstrate how to integrate the DJI And
     *   Set the template to **"Empty Activity"** and then press **"Next"**.
 
 <p "center">
-  <img src="guide/empty_activity_selection.PNG">
+  <img src="guide/empty_activity_selection.png">
  </p>
 
 *   On the next screen:
