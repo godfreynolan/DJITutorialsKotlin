@@ -44,6 +44,8 @@ Throughout this tutorial we will be using Android Studio Bumblebee | 2021.1.1. Y
     * Do **NOT** check the option to "Use legacy android.support.libraries"
     * Click **Finish** to create the project.
 
+*   In the `build.gradle (Module)` file, set the **applicationID** to **com.riis.mediamanagerdemo**. This bundle ID corresponds to the DJI key that we will use.
+
 #### 2. Import Maven Dependency
 
 Please check the [Importing and Activating DJI SDK](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the DJI Android UX SDK Maven Dependency to your project. If you haven't read that previously, please take a look at it and implement the related features. Once you've done that, continue to implement the next features.
@@ -1581,7 +1583,7 @@ Lastly, open the `styles.xml` file and replace the content with the following:
 ```
 ---
 ### Registering the Application
-After you finish the above steps, let's register our application with the App Key you obtain from the DJI Developer Website. If you are not familiar with the App Key, please check the [Get Started](https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html).
+After you finish the above steps, let's register our application with the App Key you obtain from the DJI Developer Website. If you are not familiar with the App Key, please check the [Get Started](https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html). A DJI App key has already been provided in the following code.
 
 1. Let's open the `AndroidManifest.xml` file and replace its code with the following:
 ```xml
@@ -1630,7 +1632,7 @@ After you finish the above steps, let's register our application with the App Ke
 
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="Please enter your APP Key here." />
+            android:value="2645608b67785db2b36512f5" />
 
         <activity
             android:name=".ConnectionActivity"
@@ -1650,6 +1652,9 @@ After you finish the above steps, let's register our application with the App Ke
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
+             <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
         </activity>
         <activity
             android:name=".DefaultLayoutActivity"
@@ -1661,6 +1666,16 @@ After you finish the above steps, let's register our application with the App Ke
     </application>
 
 </manifest>
+```
+
+2. All that is left is to add the accessory filter file to the project. With this file, the app can determine what devices are being plugged into the Android phone. Create a new `Directory` under `app/res/` called **xml**. Then, right click the newly created folder and create a new `XML Resource File` called **accessory_filter.xml**. Then press **OK**. Inside this resource file, replace all pre-existing code with the following code. The user will now be prompted to open the app when DJI controllers are plugged in.
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-accessory model="T600" manufacturer="DJI"/>
+    <usb-accessory model="AG410" manufacturer="DJI"/>
+</resources>
+
 ```
 Congratulations! Your DJI drone Media Manager android app is complete.
 
