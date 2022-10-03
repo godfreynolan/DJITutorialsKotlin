@@ -1416,7 +1416,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 #### 6. Default Layout Activity
 In the project navigator, go to **app -> java -> com -> riis -> kotlin_mediamanagerdemo**, and right-click on the kotlin_mediamanagerdemo directory. Select **New -> Kotlin Class/File** to create a new kotlin class and name it as `DefaultLayoutActivity.kt`. 
 
-Next, replace the code of the `DefaultLayoutActicity.kt` file with the following:
+Next, replace the code of the `DefaultLayoutActivity.kt` file with the following:
 ```kotlin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -2023,7 +2023,7 @@ Lastly, right click on `/app/res/values` folder and create new `Values Resource 
 ```
 ---
 ### Registering the Application
-After you finish the above steps, let's register our application with the App Key you obtain from the DJI Developer Website. If you are not familiar with the App Key, please check the [Get Started](https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html). A DJI App key has already been provided in the following code.
+After you finish the above steps, let's register our application with the App Key you obtain from the DJI Developer Website. If you are not familiar with the App Key, please check the [Get Started](https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html). A DJI App key has already been provided in the following code. **WARNING** The names of the activities in the manifest may have to be retyped in to work with your project. For example, if there is an error with `.ConnectionActivity`. Then, delete `.ConnectionActivity` and start typing `ConnectionActivity`. Once the autocompleted entry pops up, select it.
 
 1. Let's open the `AndroidManifest.xml` file and replace its code with the following:
 ```xml
