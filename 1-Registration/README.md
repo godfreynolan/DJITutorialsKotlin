@@ -29,10 +29,10 @@ This application will be used solely to demonstrate how to integrate the DJI And
     * Click **Finish** to create the project.
 
 <p "center">
-  <img src="guide/selection_page.PNG">
+  <img src="guide/selection_page2.PNG">
  </p>
 
-> **Note:** **Package name** is the identifying string required to [generate an App Key](https://developer.dji.com/windows-sdk/documentation/quick-start/index.html#generate-an-app-key). The activity java, manifest xml and Gradle script code below assumes **Package name** is "com.dji.importsdkdemo"
+> **Note:** **Package name** is the identifying string required to [generate an App Key](https://developer.dji.com/windows-sdk/documentation/quick-start/index.html#generate-an-app-key). The activity java, manifest xml and Gradle script code below assumes **Package name** is "com.riis.kotlin_importandactivatesdkinandroidstudio"
 
 
 ### Configure the Gradle Script
@@ -50,7 +50,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.dji.importsdkdemo'
+        applicationId 'com.com.riis.kotlin_importandactivatesdkinandroidstudio'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
