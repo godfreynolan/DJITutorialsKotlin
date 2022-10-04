@@ -207,8 +207,6 @@ In the project file navigator, go to **app -> java -> com -> riis -> fpv**, and 
 Then, open the `MApplication.kt` file and replace the content with the following:
 
 ```kotlin
-package com.riis.kotlin_mediamanagerdemo
-
 import android.app.Application
 import android.content.Context
 import com.secneo.sdk.Helper
@@ -228,8 +226,6 @@ Here we override the `attachBaseContext()` method to invoke the `install()` meth
 The MainActivity.kt file is created by Android Studio by default. Let's replace its code with the following:
 
 ```kotlin
-package com.riis.fpv
-
 import android.graphics.SurfaceTexture
 import android.os.Bundle
 import android.view.TextureView
@@ -686,8 +682,6 @@ In the project navigator, go to **app -> java -> com -> riis -> fpv**, and right
 Next, replace the code of the `ConnectionActivity.kt` file with the following:
 
 ```kotlin
-package com.riis.fpv
-
 import android.Manifest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -907,8 +901,6 @@ In the project navigator, go to **app -> java -> com -> riis -> fpv**, and right
 
 Next, replace the code of the `ConnectionViewModel.kt` file with the following:
 ```kotlin
-package com.riis.fpv
-
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
