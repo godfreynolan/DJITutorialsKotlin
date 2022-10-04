@@ -43,7 +43,159 @@ Throughout this tutorial we will be using Android Studio Bumblebee | 2021.1.1. Y
     * Click **Finish** to create the project.
 
 #### 2. Import Maven Dependency
-In our previous tutorial, [Importing and Activating DJI SDK](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/1-Registration) in Android Studio Project, you have learned how to import the Android SDK Maven Dependency and activate your application. If you haven't read that previously, please take a look at it and implement the related features. Once you've done that, continue to implement the next features.
+In our previous tutorial, [Importing and Activating DJI SDK](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/1-Registration) in Android Studio Project, you have learned how to import the Android SDK Maven Dependency and activate your application. If you haven't read that previously, please take a look at it and implement the related features. Please use the following files.
+
+#### build.gradle (Project)
+Please **replace everything** in the `build.gradle (Project)` with
+```kotlin
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+#### build.gradle (Module)
+Please **replace everything** in the `build.gradle (Module)` with
+```kotlin
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId 'com.riis.djifpvkotlin'
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        multiDexEnabled true
+        versionName "1.0"
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    //DJI Dependencies
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation ('com.dji:dji-sdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    implementation ('com.dji:dji-uxsdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    compileOnly ('com.dji:dji-sdk-provided:4.16')
+
+    // ViewModels and Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.fragment:fragment-ktx:1.2.4")
+
+
+    //Default
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+// Please uncomment the following code if you use your own sdk version.
+//apply from : "https://terra-1-g.djicdn.com/71a7d383e71a4fb8887a310eb746b47f/msdk/Android-CommonConfig/config_sample_all.gradle"
+```
+#### Android Jetifier
+Please **add** the following line to the `gradle.properties` file
+```kotlin
+android.enableJetifier=true
+```
+
+#### settings.gradle
+Please **replace everything** in the `settings.gradle` with
+```kotlin
+rootProject.name = "Kotlin-CameraDemo"
+include ':app'
+```
 
 ---
 ### Building the Layouts of Activity
@@ -886,7 +1038,7 @@ Furthermore, open the `strings.xml` file and replace the content with the follow
  <string name="sdk_version">DJI SDK Version: %1$s</string>  
 </resources>
 ```
-Lastly, open the `styles.xml` file and replace the content with the following:
+Lastly, create `styles.xml` and replace the content with the following:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -910,7 +1062,7 @@ After you finish the above steps, let's register our application with the App Ke
 <uses-permission android:name="android.permission.VIBRATE" />
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="a`ndroid.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -951,7 +1103,7 @@ Moreover, let's add the following elements as childs of the `<application>` elem
    android:required="false" />
 <meta-data
    android:name="com.dji.sdk.API_KEY"
-   android:value="Please enter your APP Key here." />
+   android:value="4d103048c2fa9145db524bf0" />
 <!-- DJI SDK -->
 ```
 In the code above, you should substitute your **App Key** of the application for "Please enter your App Key here." in the value attribute under the `android:name="com.dji.sdk.API_KEY` attribute.
@@ -972,11 +1124,25 @@ Lastly, update the "MainActivity" and "ConnectionActivity" `<activity>` elements
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
         </activity>
         <activity android:name="com.riis.fpv.MainActivity"
             android:screenOrientation="userLandscape"/>
 ```
 In the code above, we add the attributes of `android:screenOrientation` to set "ConnectionActivity" as **portrait** and set "MainActivity" as **landscape**.
+
+All that is left is to add the accessory filter file to the project. With this file, the app can determine what devices are being plugged into the Android phone. Create a new `Directory` under `app/res/` called **xml**, if one has not already been made. Then, right click the newly created folder and create a new `XML Resource File` called **accessory_filter.xml**. Then press **OK**. Inside this resource file, replace all pre-existing code with the following code. The user will now be prompted to open the app when DJI controllers are plugged in.
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-accessory model="T600" manufacturer="DJI"/>
+    <usb-accessory model="AG410" manufacturer="DJI"/>
+</resources>
+
+```
+
 Congratulations! Your Aerial FPV android app is complete, you can now use this app to control the camera of your DJI Product now.
 
 #### Connection Activity 
