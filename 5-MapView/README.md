@@ -168,7 +168,7 @@ For more details about configuring your App for Multidex with Gradle, please che
 
 ### Importing the DJI Dependencies
 
-Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Please use the follow gradle files.
+Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Please use the following gradle files.
 
 #### Build.gradle (Project)
 ```kotlin
