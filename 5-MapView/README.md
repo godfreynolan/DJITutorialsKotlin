@@ -337,7 +337,6 @@ dependencies {
 }
 ```
 #### gradle.properties
-**NOTE** please make sure to set your mapbox key. Don't use quotations around the key when setting it.
 ```kotlin
 # Project-wide Gradle settings.
 # IDE (e.g. Android Studio) users:
