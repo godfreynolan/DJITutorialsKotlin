@@ -58,6 +58,9 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
         </activity>
 
         <uses-library android:name="com.android.future.usb.accessory" />
@@ -67,7 +70,7 @@
 
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="b717924e5058410f468d5885" />
+            android:value="2645608b67785db2b36512f5" />
 
         <activity android:name=".MainActivity" />
     </application>
