@@ -363,7 +363,6 @@ kotlin.code.style=official
 # thereby reducing the size of the R class for that library
 android.nonTransitiveRClass=true
 android.enableJetifier=true
-MAPBOX_DOWNLOADS_TOKEN=
 ```
 
 #### Settings.gradle
