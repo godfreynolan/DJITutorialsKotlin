@@ -28,7 +28,7 @@ We can use the map view to display waypoints and show the flight route of the ai
 
 #### 1. Create the project
 
-Open Android Studio and select **File -> New -> New Project** to create a new project, named `"GSDemo-Kotlin"`. Enter the company domain and package name `(Here we use "com.riis.gsdemo_kotlin")` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
+Open Android Studio and select **File -> New -> New Project** to create a new project, named `"GSDemo-Kotlin"`. Enter the company domain and package name `(Here we use "com.riis.mapviewdemo")` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
 
 #### 2. Install the Mapbox SDK
 
@@ -53,27 +53,80 @@ Once this is complete, please add the api access token as a raw string to `strin
 
 #### 3. Android Manifest Permissions
 
-Specify the permissions of your application needs, by adding `<uses-permission>` elements as children of the `<manifest>` element in the `AndroidManifest.xml` file.
+Specify the permissions of your application needs, by adding `<uses-permission>` elements as children of the `<manifest>` element in the `AndroidManifest.xml` file. In the manifest below, the DJI key was added for you. Make sure to use ` applicationId "com.riis.mapviewdemo"` in the `build.gradle (Module)` for the DJI key to work.
 
 ```xml
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-<uses-permission android:name="android.permission.VIBRATE" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="android.permission.WAKE_LOCK" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
-    tools:ignore="ProtectedPermissions" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    tools:ignore="ScopedStorage" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.riis.mapviewwalkthrough">
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <application
+        android:name=".MApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MapviewWalkthrough"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".Waypoint1Activity" />
+        <activity
+            android:name=".ConnectionActivity"
+            android:configChanges="orientation"
+            android:launchMode="singleTop"
+            android:screenOrientation="fullSensor">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
+        </activity>
+        <uses-library android:name="com.android.future.usb.accessory" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.dji.sdk.API_KEY"
+            android:value="11c80ae0fc2503e69f5ba1b5" />
+    </application>
+</manifest>
 ```
+
 
 #### 4. Adding Multidex Support with Gradle
 
@@ -115,17 +168,305 @@ For more details about configuring your App for Multidex with Gradle, please che
 
 ### Importing the DJI Dependencies
 
-Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI.
+Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Please use the follow gradle files.
 
+#### Build.gradle (Project)
+```kotlin
+buildscript {
+    ext.kotlin_version = "1.6.10"
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.3"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                username = 'mapbox'
+                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+#### Build.gradle (Module)
+```kotlin
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+repositories {
+    mavenLocal()
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.riis.mapviewdemo"
+        minSdkVersion 22
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        doNotStrip "*/*/libDJIWaypointV2Core.so"
+        doNotStrip "*/*/libAMapSDK_MAP_v6_9_2.so"
+        doNotStrip "*/*/libDJIMOP.so"
+        doNotStrip "*/*/libDJISDKLOGJNI.so"
+
+        pickFirst 'lib/*/libstlport_shared.so'
+        pickFirst 'lib/*/libRoadLineRebuildAPI.so'
+        pickFirst 'lib/*/libGNaviUtils.so'
+        pickFirst 'lib/*/libGNaviMapex.so'
+        pickFirst 'lib/*/libGNaviData.so'
+        pickFirst 'lib/*/libGNaviMap.so'
+        pickFirst 'lib/*/libGNaviSearch.so'
+        pickFirst 'lib/*/libDJIFlySafeCore.so'
+        pickFirst 'lib/*/libdjifs_jni.so'
+        pickFirst 'lib/*/libsfjni.so'
+        exclude 'META-INF/proguard/okhttp3.pro'
+        exclude 'META-INF/rxjava.properties'
+        exclude 'assets/location_map_gps_locked.png'
+        exclude 'assets/location_map_gps_3d.png'
+    }
+}
+
+dependencies {
+
+    //DJI Dependencies
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation ('com.dji:dji-sdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    implementation ('com.dji:dji-uxsdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    compileOnly ('com.dji:dji-sdk-provided:4.16')
+
+    //Mapbox
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
+
+    // ViewModels and Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.fragment:fragment-ktx:1.2.4")
+
+    //Default
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+```
+#### gradle.properties
+**NOTE** please make sure to set your mapbox key. Don't use quotations around the key when setting it.
+```kotlin
+# Project-wide Gradle settings.
+# IDE (e.g. Android Studio) users:
+# Gradle settings configured through the IDE *will override*
+# any settings specified in this file.
+# For more details on how to configure your build environment visit
+# http://www.gradle.org/docs/current/userguide/build_environment.html
+# Specifies the JVM arguments used for the daemon process.
+# The setting is particularly useful for tweaking memory settings.
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+# When configured, Gradle will run in incubating parallel mode.
+# This option should only be used with decoupled projects. More details, visit
+# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+# org.gradle.parallel=true
+# AndroidX package structure to make it clearer which packages are bundled with the
+# Android operating system, and which are packaged with your app"s APK
+# https://developer.android.com/topic/libraries/support-library/androidx-rn
+android.useAndroidX=true
+# Kotlin code style for this project: "official" or "obsolete":
+kotlin.code.style=official
+# Enables namespacing of each library's R class so that its R class includes only the
+# resources declared in the library itself and none from the library's dependencies,
+# thereby reducing the size of the R class for that library
+android.nonTransitiveRClass=true
+android.enableJetifier=true
+MAPBOX_DOWNLOADS_TOKEN=
+```
+
+#### Settings.gradle
+```kotlin
+include ':app'
+rootProject.name = "GSDemo-Kotlin"
+```
 ---
+### XML File Setup
+#### 1. Colors.xml
+Open `colors.xml` under `app/res/values`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="black_overlay">#000000</color>
+</resources>
+```
+
+#### 2. Round_btn.xml
+Create `round_btn.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/round_btn_normal" android:state_focused="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_selected="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_pressed="true"></item>
+    <item android:drawable="@drawable/round_btn_disable" android:state_enabled="false"></item>
+    <item android:drawable="@drawable/round_btn_normal" ></item>
+</selector>
+```
+Create `round_btn_disable.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AAAAAAAA" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+Create `round_btn_normal.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF314268" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+Create `round_btn_pressed.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AA314268" />
+    <corners android:topLeftRadius="10dp"
+             android:topRightRadius="10dp"
+             android:bottomRightRadius="10dp"
+             android:bottomLeftRadius="10dp"/>
+</shape>
+```
+
+Create `accessory_filter.xml` under `app/res/xml`. Create the XML folder resource if not already created. 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-accessory model="T600" manufacturer="DJI"/>
+    <usb-accessory model="AG410" manufacturer="DJI"/>
+</resources>
+```
 
 ### Creating App Layouts and Classes
-
 #### 1. Working on the MApplication, DJIDemoApplication, and ConnectionActivity
 
-Please check the [Creating an Camera Application](https://github.com/riisinterns/drone-lab-three-camera-demo) tutorial and its associated sample project for the detailed implementations of `MApplication`.
+Please check the [Creating an Camera Application](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial and its associated sample project for the detailed implementations of `MApplication`.
 
-To improve the user experience, we had better create an activity to show the connection status between the DJI Product and the SDK, once it's connected, the user can press the **OPEN** button to enter the **MainActivity**. You can also check the [Creating an Camera Application](https://github.com/riisinterns/drone-lab-three-camera-demo) tutorial to learn how to implement the `ConnectionActivity` Class and Layout in this project (along with its viewmodel).
+To improve the user experience, we had better create an activity to show the connection status between the DJI Product and the SDK, once it's connected, the user can press the **OPEN** button to enter the **MainActivity**. You can also check the [Creating an Camera Application](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial to learn how to implement the `ConnectionActivity` Class and Layout in this project (along with its viewmodel).
+
+#### MApplication
+```kotlin
+import android.app.Application
+import android.content.Context
+import com.secneo.sdk.Helper
+
+class MApplication: Application() {
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        Helper.install(this)
+    }
+}
+```
+
+
 
 In order to create the `DJIDemoApplication.kt` singleton class, please add the following code to that file inside the com.riis.gsdemo_kotlin package:
 
@@ -182,6 +523,163 @@ object DJIDemoApplication {
 
     fun isPlaybackAvailable(): Boolean {
         return isCameraModuleAvailable() && (getProductInstance()?.camera?.playbackManager != null)
+    }
+
+}
+```
+
+#### Connection Activity
+```kotlin
+import android.Manifest
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import dji.sdk.sdkmanager.DJISDKManager
+
+class ConnectionActivity : AppCompatActivity() {
+    private lateinit var mTextConnectionStatus: TextView
+    private lateinit var mTextProduct: TextView
+    private lateinit var mTextModelAvailable: TextView
+    private lateinit var mBtnOpen: Button
+    private lateinit var mVersionTv: TextView
+
+    private val model: ConnectionViewModel by viewModels() // this is all our data stored in the view model
+
+    companion object { // a tag for debugging
+        const val TAG = "ConnectionActivity"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_connection)
+
+        ActivityCompat.requestPermissions(this, // request all the permissions that we'll need
+            arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.VIBRATE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.READ_PHONE_STATE
+            ), 1)
+
+        initUI() // initialize the UI
+        model.registerApp()
+        observers()
+
+    }
+
+    private fun initUI() { // Initializes the UI with all the string values
+        mTextConnectionStatus = findViewById(R.id.text_connection_status)
+        mTextModelAvailable = findViewById(R.id.text_model_available)
+        mTextProduct = findViewById(R.id.text_product_info)
+        mBtnOpen = findViewById(R.id.btn_open)
+        mVersionTv = findViewById(R.id.textView2)
+        mVersionTv.text = resources.getString(R.string.sdk_version, DJISDKManager.getInstance().sdkVersion)
+        mBtnOpen.isEnabled = false
+        mBtnOpen.setOnClickListener { // navigate to the main activity
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun observers() {
+        model.connectionStatus.observe(this, Observer<Boolean> { isConnected -> // observe the connection status and enable the button on connection
+            if (isConnected) {
+                mTextConnectionStatus.text = "Status: Connected"
+                mBtnOpen.isEnabled = true
+            }
+            else {
+                mTextConnectionStatus.text = "Status: Disconnected"
+                mBtnOpen.isEnabled = false
+            }
+        })
+
+        model.product.observe(this, Observer { baseProduct -> // observe the product and populate the appropriate text fields
+            if (baseProduct != null && baseProduct.isConnected) {
+                mTextModelAvailable.text = baseProduct.firmwarePackageVersion
+                mTextProduct.text = baseProduct.model.displayName
+            }
+
+        })
+    }
+}
+```
+
+#### Connection View Model
+```kotlin
+import androidx.lifecycle.AndroidViewModel
+import android.app.Application
+import androidx.lifecycle.MutableLiveData
+import android.util.Log
+import dji.common.error.DJIError
+import dji.common.error.DJISDKError
+import dji.sdk.base.BaseComponent
+import dji.sdk.base.BaseProduct
+import dji.sdk.sdkmanager.DJISDKInitEvent
+import dji.sdk.sdkmanager.DJISDKManager
+
+class ConnectionViewModel(application: Application) : AndroidViewModel(application) {
+
+    val product: MutableLiveData<BaseProduct?> by lazy { // create an observable product object
+        MutableLiveData<BaseProduct?>()
+    }
+
+    val connectionStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    fun registerApp() { // this will register your app based on the DJI SDK key you put in your manifest
+        DJISDKManager.getInstance().registerApp(getApplication(), object: DJISDKManager.SDKManagerCallback {
+            override fun onRegister(error: DJIError?) {
+                if (error == DJISDKError.REGISTRATION_SUCCESS) {
+                    Log.i(ConnectionActivity.TAG, "onRegister: Registration Successful")
+                } else {
+                    Log.i(ConnectionActivity.TAG, "onRegister: Registration Failed - ${error?.description}")
+                }
+            }
+
+            override fun onProductDisconnect() { // update status on disconnect
+                Log.i(ConnectionActivity.TAG, "onProductDisconnect: Product Disconnected")
+                connectionStatus.postValue(false)
+            }
+
+            override fun onProductConnect(baseProduct: BaseProduct?) { // update values on connect
+                Log.i(ConnectionActivity.TAG, "onProductConnect: Product Connected")
+                product.postValue(baseProduct)
+                connectionStatus.postValue(true)
+            }
+
+            override fun onProductChanged(baseProduct: BaseProduct?) { // update when product is changed
+                Log.i(ConnectionActivity.TAG, "onProductChanged: Product Changed - $baseProduct")
+                product.postValue(baseProduct)
+
+            }
+
+            override fun onComponentChange(componentKey: BaseProduct.ComponentKey?, oldComponent: BaseComponent?, newComponent: BaseComponent?) {
+                Log.i(ConnectionActivity.TAG, "onComponentChange key: $componentKey, oldComponent: $oldComponent, newComponent: $newComponent")
+                newComponent?.let { component ->
+                    component.setComponentListener { connected ->
+                        Log.i(ConnectionActivity.TAG, "onComponentConnectivityChange: $connected")
+                    }
+                }
+            }
+
+            override fun onInitProcess(p0: DJISDKInitEvent?, p1: Int) {}
+
+            override fun onDatabaseDownloadProgress(p0: Long, p1: Long) {}
+
+        })
     }
 
 }
@@ -413,7 +911,7 @@ In the xml file, we implement the following UIs:
 
 * Lastly, we create a map view fragment and place it at the bottom.
 
-Furthermore, open the `AndroidManifest.xml` file and ensure the following ".MainActivity" activity element exists within the application tag as shown below:
+Furthermore, open the `AndroidManifest.xml` file and ensure the following ".Waypoint1Activity" activity element exists within the application tag as shown below:
 
 ```xml
 <activity android:name=".Waypoint1Activity" />
@@ -423,7 +921,7 @@ Now, if you check the `activity_waypoint1.xml` file, you should see something si
 
 <img src="./images/initial-waypoint1-screen.png" alt="drawing" width="200"/>
 
-For the configuration dialogue layout let's create a new xml file named `dialog_waypointsetting.xml` in the layout folder by right-clicking on the "layout" folder and selecting **New->XML->Layout XML** File. Then replace the code with the [same file](https://github.com/riisinterns/drone-lab-five-mapview-waypoint/blob/main/app/src/main/res/layout/dialog_waypointsetting.xml) as the Github Demo Project. Since the content is too much, it won't be shown here.
+For the configuration dialogue layout let's create a new xml file named `dialog_waypointsetting.xml` in the layout folder by right-clicking on the "layout" folder and selecting **New->XML->Layout XML** File. Then replace the code with the [same file](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/res/layout/dialog_waypointsetting.xml) as the Github Demo Project. Since the content is too much, it won't be shown here.
 
 This xml file will help to setup a textView to enter "Altitude" and create three RadioButton Groups for selecting **Speed**, **Action After Finished** and **Heading**.
 
@@ -431,7 +929,7 @@ Now, if you check the `dialog_waypointsetting.xml` file, yyou should see somethi
 
 <img src="./images/waypoint1-configuration.png" alt="drawing" width="200"/>
 
-> NOTE: For a wholistic view of the code, please refer to [Waypoint1Activity](https://github.com/riisinterns/drone-lab-five-mapview-waypoint/blob/main/app/src/main/java/com/riis/gsdemo_kotlin/Waypoint1Activity.kt) located within the demo repository. Explore its comments to get a better understanding of the code. In the next section, we will edit `Waypoint1Activity.kt`.
+> NOTE: For a wholistic view of the code, please refer to [Waypoint1Activity](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/java/com/riis/gsdemo_kotlin/Waypoint1Activity.kt) located within the demo repository. Explore its comments to get a better understanding of the code. In the next section, we will edit `Waypoint1Activity.kt`.
 ---
 
 ### Implementing the Waypoint Activity
@@ -442,12 +940,41 @@ Now, if you check the `dialog_waypointsetting.xml` file, yyou should see somethi
 
 Before we implementing the waypoint mission feature, we should show the aircraft's location on the Mapbox Map and try to zoom in automatically to view the surrounding area of the aircraft.
 
-Let's open `Wapoint1Activity.kt` file and declare the following variables first:
+Let's open `Wapoint1Activity.kt` file
 
+Extend `Waypoint1Activity` with `AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener` as shown below
 ```kotlin
+class Waypoint1Activity: AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener{
+    ...
+}
+```
+
+Declare the following variables first:
+```kotlin
+private lateinit var locate: Button
+private lateinit var add: Button
+private lateinit var clear: Button
+private lateinit var config: Button
+private lateinit var upload: Button
+private lateinit var start: Button
+private lateinit var stop: Button
+
 private var droneLocationLat: Double = 15.0
 private var droneLocationLng: Double = 15.0
 private var droneMarker: Marker? = null
+private var isAdd = false
+private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
+private var mapboxMap: MapboxMap? = null
+```
+
+Then, `override onMapReady()` functon and add the following code. The map is initialized here, the click listener is set, and the style is set.
+```kotlin
+ override fun onMapReady(mapboxMap: MapboxMap) {
+        this.mapboxMap = mapboxMap // initialize the map
+        mapboxMap.addOnMapClickListener(this)
+        mapboxMap.setStyle(Style.MAPBOX_STREETS) { // set the view of the map
+        }
+    }
 ```
 
 Then, `override onCreate()` initializes the map instance with the access token while also adding it to the fragment view in the layout. It also initializes the UI (`initUI()`) and adds the waypoint mission operator listeners (`addListener()`).
@@ -477,6 +1004,27 @@ override fun onDestroy() {
     super.onDestroy()
     removeListener()
 }
+```
+
+Create the `initUI()` function and add the following code
+```kotlin
+private fun initUi() {
+        locate = findViewById(R.id.locate)
+        add = findViewById(R.id.add)
+        clear = findViewById(R.id.clear)
+        config = findViewById(R.id.config)
+        upload = findViewById(R.id.upload)
+        start = findViewById(R.id.start)
+        stop = findViewById(R.id.stop)
+
+        locate.setOnClickListener(this)
+        add.setOnClickListener(this)
+        clear.setOnClickListener(this)
+        config.setOnClickListener(this)
+        upload.setOnClickListener(this)
+        start.setOnClickListener(this)
+        stop.setOnClickListener(this)
+    }
 ```
 
 The `updateDroneLocation()` method is used to update the drone's location on the map.
