@@ -824,7 +824,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.riis.mapviewwalkthrough.DJIDemoApplication.getCameraInstance
+import com.riis.gsdemo_kotlin.DJIDemoApplication.getCameraInstance
 import dji.common.camera.SettingsDefinitions
 import dji.common.error.DJIError
 import dji.common.error.DJIMissionError
