@@ -246,8 +246,9 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
             if (error == null) {
                 setResultToToast("Mission upload successfully!")
             } else {
-                setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
-                getWaypointMissionOperator()?.retryUploadMission(null)
+                 //uncomment for DJI waypoint mission manager
+                //setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
+                //getWaypointMissionOperator()?.retryUploadMission(null)
             }
         }
     }
