@@ -2011,7 +2011,7 @@ override fun onClick(v: View?) {
     }
 }
 ```
-**Only for WaypointsV1** The above code is meant for adding automated flight functionality to DJI mini drones. To fly drones that support automatic waypoints, the following functions can replace their counter parts. The config section will not be functional, except for height, when using the mavic mini code, but will still need information entered in order for missions to be run. The config section will be functional when using DJI's default waypoint mission operator.
+**Only for WaypointsV1** The above code is meant for adding automated flight functionality to DJI mini drones. To fly drones that support automatic waypoints, the following functions can replace their counter parts. The config section will not be functional, except for height and speed, when using the mavic mini code, but will still need information entered in order for missions to be run. The config section will be functional when using DJI's default waypoint mission operator.
 ```kotlin
 private fun getWaypointMissionOperator(): WaypointMissionOperator? { // returns the mission operator
         if (instance == null) {
