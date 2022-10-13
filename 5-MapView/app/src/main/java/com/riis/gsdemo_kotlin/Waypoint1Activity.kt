@@ -49,6 +49,7 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
     private var droneMarker: Marker? = null
     private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
     private var mapboxMap: MapboxMap? = null
+    private var mavicMiniMissionOperator: MavicMiniMissionOperator? = null
 
     private var altitude = 100f
     private var speed = 10f
@@ -122,12 +123,23 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
         removeListener()
     }
 
-    private fun addListener() {
+    //Uncomment when using DJI waypoint manager
+    /*private fun addListener() {
         getWaypointMissionOperator()?.addListener(eventNotificationListener)
     }
 
     private fun removeListener() {
         getWaypointMissionOperator()?.removeListener(eventNotificationListener)
+    }*/
+    
+     //when using mavic mini waypoint manager
+    private fun addListener() {
+        getWaypointMissionOperator()?.addListener(eventNotificationListener)
+    }
+
+     //when using mavic mini waypoint manager
+    private fun removeListener() {
+        getWaypointMissionOperator()?.removeListener()
     }
 
     private fun initUi() {
@@ -148,16 +160,21 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
         stop.setOnClickListener(this)
     }
 
-    private fun initFlightController() { // this will initialize the flight controller with predetermined data
+   
+    private fun initFlightController() {
+        // this will initialize the flight controller with predetermined data
         DJIDemoApplication.getFlightController()?.let { flightController ->
             flightController.setStateCallback { flightControllerState ->
                 // set the latitude and longitude of the drone based on aircraft location
                 droneLocationLat = flightControllerState.aircraftLocation.latitude
                 droneLocationLng = flightControllerState.aircraftLocation.longitude
                 runOnUiThread {
+                    //comment mavicMiniMissionOperator line when not using mavic mini waypoint manager
+                    mavicMiniMissionOperator?.droneLocationMutableLiveData?.postValue(flightControllerState.aircraftLocation)
                     updateDroneLocation() // this will be called on the main thread
                 }
             }
+
         }
     }
 
@@ -191,6 +208,7 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
                 runOnUiThread {
                     mapboxMap?.clear()
                 }
+                clearWaypoints()
             }
             R.id.config -> { // this will show the settings
                 showSettingsDialog()
@@ -205,6 +223,10 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
                 stopWaypointMission()
             } else -> {}
         }
+    }
+    
+    private fun clearWaypoints(){
+        waypointMissionBuilder?.waypointList?.clear()
     }
 
     private fun startWaypointMission() { // start mission
@@ -309,7 +331,8 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
                 .show()
     }
 
-    private fun configWayPointMission() {
+    //Uncomment when using DJI waypoint manager
+    /*private fun configWayPointMission() {
         if (waypointMissionBuilder == null) {
             waypointMissionBuilder = WaypointMission.Builder().finishedAction(finishedAction) // initialize the mission builder if null
                     .headingMode(headingMode)
@@ -328,6 +351,55 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
             if (builder.waypointList.size > 0) {
                 for (i in builder.waypointList.indices) { // set the altitude of all waypoints to the user defined altitude
                     builder.waypointList[i].altitude = altitude
+                }
+                setResultToToast("Set Waypoint attitude successfully")
+            }
+            getWaypointMissionOperator()?.let { operator ->
+                val error = operator.loadMission(builder.build()) // load the mission
+                if (error == null) {
+                    setResultToToast("loadWaypoint succeeded")
+                } else {
+                    setResultToToast("loadWaypoint failed " + error.description)
+                }
+            }
+        }
+    }*/
+    
+    //when using mavic mini waypoint manager
+    private fun configWayPointMission() {
+        if (waypointMissionBuilder == null) {
+            waypointMissionBuilder = WaypointMission.Builder().apply {
+                finishedAction(finishedAction) // initialize the mission builder if null
+                headingMode(headingMode)
+                autoFlightSpeed(speed)
+                maxFlightSpeed(speed)
+                flightPathMode(WaypointMissionFlightPathMode.NORMAL)
+                gotoFirstWaypointMode(WaypointMissionGotoWaypointMode.SAFELY)
+                isGimbalPitchRotationEnabled = true
+            }
+        }
+
+        waypointMissionBuilder?.let { builder ->
+            builder.apply {
+                finishedAction(finishedAction)
+                headingMode(headingMode)
+                autoFlightSpeed(speed)
+                maxFlightSpeed(speed)
+                flightPathMode(WaypointMissionFlightPathMode.NORMAL)
+                gotoFirstWaypointMode(WaypointMissionGotoWaypointMode.SAFELY)
+                isGimbalPitchRotationEnabled = true
+            }
+
+            if (builder.waypointList.size > 0) {
+                for (i in builder.waypointList.indices) { // set the altitude of all waypoints to the user defined altitude
+                    builder.waypointList[i].altitude = altitude
+                    builder.waypointList[i].heading = 0
+                    builder.waypointList[i].actionRepeatTimes = 1
+                    builder.waypointList[i].actionTimeoutInSeconds = 30
+                    builder.waypointList[i].turnMode = WaypointTurnMode.CLOCKWISE
+                    builder.waypointList[i].addAction(WaypointAction(WaypointActionType.GIMBAL_PITCH, -90))
+                    builder.waypointList[i].addAction(WaypointAction(WaypointActionType.START_TAKE_PHOTO, 0))
+                    builder.waypointList[i].shootPhotoDistanceInterval = 28.956f
                 }
                 setResultToToast("Set Waypoint attitude successfully")
             }
@@ -390,12 +462,21 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
         }
     }
 
-    private fun getWaypointMissionOperator(): WaypointMissionOperator? { // returns the mission operator
+    //Uncomment to use DJI waypoint operator (drones that support automated flight)
+    /*private fun getWaypointMissionOperator(): WaypointMissionOperator? { // returns the mission operator
         if (instance == null) {
             if (DJISDKManager.getInstance().missionControl != null) {
                 instance = DJISDKManager.getInstance().missionControl.waypointMissionOperator
             }
         }
         return instance
+    }*/
+    
+    //when using mavic mini waypoint manager
+    private fun getWaypointMissionOperator(): MavicMiniMissionOperator? { // returns the mission operator
+        if(mavicMiniMissionOperator == null){
+            mavicMiniMissionOperator = MavicMiniMissionOperator(this)
+        }
+        return mavicMiniMissionOperator
     }
 }
