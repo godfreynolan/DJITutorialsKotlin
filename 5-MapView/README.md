@@ -1943,8 +1943,8 @@ private fun uploadWaypointMission() { // upload the mission
         if (error == null) {
             setResultToToast("Mission upload successfully!")
         } else {
-            setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
-             //uncomment for DJI waypoint mission manager
+            //uncomment for DJI waypoint mission manager
+            //setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
             //getWaypointMissionOperator()?.retryUploadMission(null)
         }
     }
