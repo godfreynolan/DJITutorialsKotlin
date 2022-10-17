@@ -50,7 +50,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.com.riis.kotlin_importandactivatesdkinandroidstudio'
+        applicationId 'com.riis.kotlin_importandactivatesdkinandroidstudio'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
@@ -166,6 +166,22 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+```
+Add the following line to the bottom of your gradle.properties file. This Android plugin automatically migrates existing third-party libraries to use AndroidX by rewriting their binaries.
+```gradle
+android.enableJetifier=true
+```
+
+Next right click on the app/src/main/res/xml folder and choose **New -> XML Resource File** and create the accessory_filter.xml file with the following contents
+
+```xml    
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-accessory model="T600" manufacturer="DJI"/>
+    <usb-accessory model="AG410" manufacturer="DJI"/>
+    <usb-accessory model="com.dji.logiclink" manufacturer="DJI"/>
+    <usb-accessory model="WM160" manufacturer="DJI"/>
+</resources>
 ```
 
 Then, finally make sure in your settings.gradle you only have
