@@ -8,7 +8,7 @@ In this tutorial, you will learn how to use the MediaManager to interact with th
 
 In order for our app to manage photos and videos, however, it must first be able to take and record them. Fortunately, by using DJI Android UX SDK, you can implement shooting photos and recording videos functionalities easily with standard DJI Go UIs.
 
-You can download the tutorial's final sample project from this [Github Page](https://github.com/riisinterns/drone-lab-four-media-manager).
+You can download the tutorial's final sample project from this [Github Page]([https://github.com/riisinterns/drone-lab-four-media-manager](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager)).
 
 ---
 ### Application Activation and Aircraft Binding in China
@@ -44,7 +44,7 @@ Throughout this tutorial we will be using Android Studio Bumblebee | 2021.1.1. Y
     * Do **NOT** check the option to "Use legacy android.support.libraries"
     * Click **Finish** to create the project.
 
-*   In the `build.gradle (Module)` file, set the **applicationID** to **com.riis.mediamanagerdemo**. This bundle ID corresponds to the DJI key that we will use.
+*   In the `build.gradle (Module)` file, set the **applicationID** to **com.riis.kotlin_mediamanagerdemo**. This bundle ID corresponds to the DJI key that we will use.
 
 #### 2. Import Maven Dependency
 
@@ -95,7 +95,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.riis.mediamanagerdemo'
+        applicationId 'com.riis.kotlin_mediamanagerdemo'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
