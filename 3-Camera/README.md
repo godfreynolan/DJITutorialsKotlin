@@ -1048,60 +1048,63 @@ Lastly, create `styles.xml` and replace the content with the following:
 ### Registering the Application
 After you finish the above steps, let's register our application with the App Key you obtain from the DJI Developer Website. If you are not familiar with the App Key, please check the [Get Started](https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html).
 1. Let's open the `AndroidManifest.xml` file and specify the permissions that your application needs by adding `<uses-permission>` elements into the `<manifest>` element of the `AndroidManifest.xml` file. We also need to declare the camera and USB hardwares using `<uses-feature>` child elements since they will be used by the application.
+2. Next, add `android:name=".MApplication"` inside of the `<application>` element in the `AndroidManifest.xml` file
+3. Moreover, let's add the following elements as childs of the `<application>` element, right on top of the "ConnectionActivity" `<activity>` element as shown below
+4. In the code above, you should substitute your **App Key** of the application for "Please enter your App Key here." in the value attribute under the `android:name="com.dji.sdk.API_KEY` attribute.
+5. Lastly, update the "MainActivity" and "ConnectionActivity" `<activity>` elements as shown below:
 ```xml
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-<uses-permission android:name="android.permission.VIBRATE" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="android.permission.WAKE_LOCK" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
-    tools:ignore="ProtectedPermissions" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    tools:ignore="ScopedStorage" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-<uses-feature android:name="android.hardware.camera" />  
-<uses-feature android:name="android.hardware.camera.autofocus" />  
-<uses-feature  
-  android:name="android.hardware.usb.host"  
-  android:required="false" />  
-<uses-feature  
-  android:name="android.hardware.usb.accessory"  
-  android:required="true" />
-```
-Next, add `android:name=".MApplication"` inside of the `<application>` element in the `AndroidManifest.xml` file:
-```xml
-<application  
-  android:name="com.riis.fpv.MApplication"  
-  android:allowBackup="true"  
-  android:icon="@mipmap/ic_launcher"  
-  android:label="@string/app_name"  
-  android:roundIcon="@mipmap/ic_launcher_round"  
-  android:supportsRtl="true"  
-  android:theme="@style/Theme.DJIFPVKotlin">
-  ```
-Moreover, let's add the following elements as childs of the `<application>` element, right on top of the "ConnectionActivity" `<activity>` element as shown below:
-```xml
-<!-- DJI SDK -->
-<uses-library android:name="com.android.future.usb.accessory" />
-<uses-library
-   android:name="org.apache.http.legacy"
-   android:required="false" />
-<meta-data
-   android:name="com.dji.sdk.API_KEY"
-   android:value="4d103048c2fa9145db524bf0" />
-<!-- DJI SDK -->
-```
-In the code above, you should substitute your **App Key** of the application for "Please enter your App Key here." in the value attribute under the `android:name="com.dji.sdk.API_KEY` attribute.
-Lastly, update the "MainActivity" and "ConnectionActivity" `<activity>` elements as shown below:
-```xml
-<activity android:name="com.riis.fpv.ConnectionActivity"
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.riis.fpv">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.usb.accessory"
+        android:required="true" />
+
+    <application
+        android:name="com.riis.fpv.MApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DJIFPVKotlin">
+
+        <!-- DJI SDK -->
+        <uses-library android:name="com.android.future.usb.accessory" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+        <meta-data
+            android:name="com.dji.sdk.API_KEY"
+            android:value="4d103048c2fa9145db524bf0" />
+        <!-- DJI SDK -->
+
+        <activity android:name="com.riis.fpv.ConnectionActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:configChanges="orientation">
@@ -1109,10 +1112,12 @@ Lastly, update the "MainActivity" and "ConnectionActivity" `<activity>` elements
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
@@ -1120,8 +1125,12 @@ Lastly, update the "MainActivity" and "ConnectionActivity" `<activity>` elements
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter"/>
         </activity>
+
         <activity android:name="com.riis.fpv.MainActivity"
             android:screenOrientation="userLandscape"/>
+    </application>
+
+</manifest>
 ```
 In the code above, we add the attributes of `android:screenOrientation` to set "ConnectionActivity" as **portrait** and set "MainActivity" as **landscape**.
 
