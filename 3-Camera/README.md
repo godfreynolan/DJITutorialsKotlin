@@ -89,7 +89,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId 'com.riis.djifpvkotlin'
+        applicationId 'com.riis.fpv'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
