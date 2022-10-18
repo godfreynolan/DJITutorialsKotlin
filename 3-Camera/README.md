@@ -582,9 +582,9 @@ In the code shown above, we implement the following features:
 
    1. Create the layout UI elements variables, including a TextureView `videoSurface`, three Buttons `captureBtn`, `shootPhotoModeBtn`, `recordVideoModeBtn`, one Toggle Button `recordBtn`, and a TextView `recordingTime`.
    
-   2. Create a VideoDataListener variable called `receivedVideoDataListener` and a DJICodecManager variable called `codecManager`. The VideoDataListener will be used to recieve video data from a connected DJI product and the DJICodecManager will be used to decode the recieved video data.
+   2. Create a VideoDataListener variable called `receivedVideoDataListener` and a DJICodecManager variable called `codecManager`. The VideoDataListener will be used to recieve video data from a connected DJI product and the DJICodecManager will be used to decode the received video data.
 
-   3. In the `onCreate()` function, invoke the `initUI()` method to initialize UI the variables. Then initialize `receivedVideoDataListener` and assign `codecManager` to decode the video data the listener recieves from a connected DJI product. Then get an instance of the camera from the DJI product and by accessing its `setSystemStateCallback`, have it display the elapsed recording time on the `recordingTime` TextView (if the camera is video recording).
+   3. In the `onCreate()` function, invoke the `initUI()` method to initialize UI the variables. Then initialize `receivedVideoDataListener` and assign `codecManager` to decode the video data the listener receives from a connected DJI product. Then get an instance of the camera from the DJI product and by accessing its `setSystemStateCallback`, have it display the elapsed recording time on the `recordingTime` TextView (if the camera is video recording).
    
    4. In the `initUi()` function, implement the `setOnClickListener()` method for all the Buttons. Also implement the `setOnCheckedChangeListener()` method for the `recordBtn` Toggle Button and set its action to start video recording (via the `startRecord()` function) when toggled and stop recording (via the `stopRecord()` function) when untoggled. Furthermore, initialize the surfaceTextureListener for `videoSurface` to allow it to display the video stream from the DJI product's camera.
    
@@ -1189,7 +1189,7 @@ Please check this [Connect Mobile Device and Run Application](https://developer.
 ---
 ### Summary
 
-In this tutorial, you have learned how to use **MediaManager** to preview photos, play videos, download or delete files, you also learn how to get and show the video playback status info. By using the **MediaManager**, the users can get the metadata for all the multimedia files, and has access to each individual multimedia file. Hope you enjoy it!
+In this tutorial, you’ve learned how to use DJI Mobile SDK to show the **FPV View** from the aircraft's camera and control the camera of DJI's Aircraft to shoot photo and record video. These are the most basic and common features in a typical drone mobile app: **Capture** and **Record**. However, if you want to create a drone app which is more fancy, you still have a long way to go. More advanced features should be implemented, including previewing the photo and video in the SD Card, showing the OSD data of the aircraft and so on. Hope you enjoy this tutorial, and stay tuned for our next one!
 
 ---
 ### License
