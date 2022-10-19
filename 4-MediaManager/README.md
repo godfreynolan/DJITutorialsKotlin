@@ -1418,6 +1418,8 @@ In the project navigator, go to **app -> java -> com -> riis -> kotlin_mediamana
 
 Next, replace the code of the `DefaultLayoutActivity.kt` file with the following:
 ```kotlin
+package com.riis.kotlin_mediamanagerdemo
+
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
