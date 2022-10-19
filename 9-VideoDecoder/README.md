@@ -32,7 +32,7 @@ This part is important as it will help us to setup the project with the latest l
 
 #### 1. Create the project
 
-Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoDecoder"`. Enter the company domain and package name `(Here we use "com.riis.videodecoder")` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
+Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoDecoder"`. Enter the company domain and package name `(com.dji.videostreamdecodingsample)` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
 
 #### 2. Add Some String Resources
 
@@ -104,7 +104,7 @@ Furthermore, let's replace the `<application>` element with the followings:
 
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="enter your app key here"/>
+            android:value="b434ac9f2ec4ea174d0ec5f5"/>
 
         <activity
             android:name=".ConnectionActivity"
@@ -126,6 +126,15 @@ Furthermore, let's replace the `<application>` element with the followings:
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     </application>
+```
+
+Create the `accessory_filter.xml` file under `app -> res -> xml` (create the xml directory if needed). Add the following code to the file
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-accessory model="T600" manufacturer="DJI"/>
+    <usb-accessory model="AG410" manufacturer="DJI"/>
+</resources>
 ```
 
 Please enter the **App Key** of the application in the value part of `android:name="com.dji.sdk.API_KEY"` attribute. For more details of the `AndroidManifest.xml` file, please check this tutorial's Github source code of the demo project.
@@ -168,19 +177,459 @@ For more details about configuring your App for Multidex with Gradle, please che
 
 ### Importing the DJI Dependencies
 
-Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI.
+Please follow [Lab Three: Camera](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Use the following gradle files for this tutorial.
 
+### Build.gradle (Project)
+```kotlin
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.6.20-RC'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+### Build.gradle (module)
+```kotlin 
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId 'com.dji.videostreamdecodingsample'
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        multiDexEnabled true
+        versionName "1.0"
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    sourceSets {
+        main {
+            jni.srcDirs=[]
+            jniLibs.srcDirs=['../libs']
+        }
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    //DJI Dependencies
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation ('com.dji:dji-sdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    implementation ('com.dji:dji-uxsdk:4.16', {
+        exclude module: 'library-anti-distortion'
+        exclude module: 'fly-safe-database'
+    })
+    compileOnly ('com.dji:dji-sdk-provided:4.16')
+
+    // ViewModels and Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.fragment:fragment-ktx:1.2.4")
+
+
+    //Default
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+}
+
+// Please uncomment the following code if you use your own sdk version.
+//apply from : "https://terra-1-g.djicdn.com/71a7d383e71a4fb8887a310eb746b47f/msdk/Android-CommonConfig/config_sample_all.gradle"
+```
+### Settings.gradle
+```kotlin
+rootProject.name = "Decoder"
+include ':app'
+```
+
+### Gradle.properties
+Please add the following line.
+```kotlin
+android.enableJetifier=true
+```
 ---
 
 ### Creating App Layouts and Classes
 
 #### 1. Implementing ConnectionActivity and VideoDecodingApplication
 
-To improve the user experience, we had better create an activity to show the connection status between the DJI Product and the SDK, once it's connected, the user can press the **OPEN** button to enter the **MainActivity**. You can also check the [Creating an Camera Application](https://github.com/riisinterns/drone-lab-three-camera-demo) tutorial to learn how to implement the `ConnectionActivity` Class and Layout in this project (along with its viewmodel). If you open the `activity_connection.xml` file, and click on the Design tab on the top right, you should see the preview screenshot of `ConnectionActivity` as shown below:
+To improve the user experience, we had better create an activity to show the connection status between the DJI Product and the SDK, once it's connected, the user can press the **OPEN** button to enter the **MainActivity**. You can also check the [Creating an Camera Application](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial to learn how to implement the `ConnectionActivity` Class and Layout in this project (along with its viewmodel). If you open the `activity_connection.xml` file, and click on the Design tab on the top right, you should see the preview screenshot of `ConnectionActivity` as shown below:
 
 <img src="./images/connection_page.jpg" alt="drawing" width="200"/>
 
 > Never mind the *MavicMini* name on the connection page, it was only used for testing the connection status.
+
+Here are the necessary connection files from the previous tutorials
+### Connection Activity: `ConnectionActivity.kt`
+```kotlin
+import android.Manifest
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import dji.sdk.sdkmanager.DJISDKManager
+
+/*
+This activity manages SDK registration and establishing a connection between the
+DJI product and the user's mobile phone.
+ */
+class ConnectionActivity : AppCompatActivity() {
+
+    //Class Variables
+    private lateinit var mTextConnectionStatus: TextView
+    private lateinit var mTextProduct: TextView
+    private lateinit var mTextModelAvailable: TextView
+    private lateinit var mBtnOpen: Button
+    private lateinit var mVersionTv: TextView
+
+    private val model: ConnectionViewModel by viewModels() //linking the activity to a viewModel
+
+    companion object {
+        const val TAG = "ConnectionActivity"
+    }
+
+    //Creating the Activity
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        //inflating the activity_connection.xml layout as the activity's view
+        setContentView(R.layout.activity_connection)
+
+        /*
+        Request the following permissions defined in the AndroidManifest.
+        1 is the integer constant we chose to use when requesting app permissions
+        */
+        ActivityCompat.requestPermissions(this,
+            arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.VIBRATE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.READ_PHONE_STATE
+            ), 1)
+
+        //Initialize the UI, register the app with DJI's mobile SDK, and set up the observers
+        initUI()
+        model.registerApp()
+        observers()
+    }
+
+    //Function to initialize the activity's UI
+    private fun initUI() {
+
+        //referencing the layout views using their resource ids
+        mTextConnectionStatus = findViewById(R.id.text_connection_status)
+        mTextModelAvailable = findViewById(R.id.text_model_available)
+        mTextProduct = findViewById(R.id.text_product_info)
+        mBtnOpen = findViewById(R.id.btn_open)
+        mVersionTv = findViewById(R.id.textView2)
+
+        //Getting the DJI SDK version and displaying it on mVersionTv TextView
+        mVersionTv.text = resources.getString(R.string.sdk_version, DJISDKManager.getInstance().sdkVersion)
+
+        mBtnOpen.isEnabled = false //mBtnOpen Button is initially disabled
+
+        //If mBtnOpen Button is clicked on, start MainActivity (only works when button is enabled)
+        mBtnOpen.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    //Function to setup observers
+    private fun observers() {
+        //observer listens to changes to the connectionStatus variable stored in the viewModel
+        model.connectionStatus.observe(this, Observer<Boolean> { isConnected ->
+            //If boolean is True, enable mBtnOpen button. If false, disable the button.
+            if (isConnected) {
+                mTextConnectionStatus.text = "Status: Connected"
+                mBtnOpen.isEnabled = true
+            }
+            else {
+                mTextConnectionStatus.text = "Status: Disconnected"
+                mBtnOpen.isEnabled = false
+            }
+        })
+
+        /*
+        Observer listens to changes to the product variable stored in the viewModel.
+        product is a BaseProduct object and represents the DJI product connected to the mobile device
+        */
+        model.product.observe(this, Observer { baseProduct ->
+            //if baseProduct is connected to the mobile device, display its firmware version and model name.
+            if (baseProduct != null && baseProduct.isConnected) {
+                mTextModelAvailable.text = baseProduct.firmwarePackageVersion
+
+                //name of the aircraft attached to the remote controller
+                mTextProduct.text = baseProduct.model.displayName
+            }
+        })
+    }
+}
+```
+### Connection View Model: `ConnectionViewModel.kt`
+```kotlin
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import dji.common.error.DJIError
+import dji.common.error.DJISDKError
+import dji.sdk.base.BaseComponent
+import dji.sdk.base.BaseProduct
+import dji.sdk.sdkmanager.DJISDKInitEvent
+import dji.sdk.sdkmanager.DJISDKManager
+
+/*
+This ViewModel stores important variables and functions needed for mobile SDK registration
+and connection to the DJI product. This allows the app to maintain its connection state
+across rotation death.
+ */
+class ConnectionViewModel(application: Application) : AndroidViewModel(application) {
+
+    //product is a BaseProduct object which stores an instance of the currently connected DJI product
+    val product: MutableLiveData<BaseProduct?> by lazy {
+        MutableLiveData<BaseProduct?>()
+    }
+
+    //connectionStatus boolean describes whether or not a DJI product is connected
+    val connectionStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    //DJI SDK app registration
+    fun registerApp() {
+        /*
+        Getting an instance of the DJISDKManager and using it to register the app
+        (requires API key in AndroidManifest). After installation, the app connects to the DJI server via
+        internet and verifies the API key. Subsequent app starts will use locally cached verification
+        information to register the app when the cached information is still valid.
+        */
+        DJISDKManager.getInstance().registerApp(getApplication(), object: DJISDKManager.SDKManagerCallback {
+            //Logging the success or failure of the registration
+            override fun onRegister(error: DJIError?) {
+                if (error == DJISDKError.REGISTRATION_SUCCESS) {
+                    Log.i(ConnectionActivity.TAG, "onRegister: Registration Successful")
+                } else {
+                    Log.i(ConnectionActivity.TAG, "onRegister: Registration Failed - ${error?.description}")
+                }
+            }
+            //called when the remote controller disconnects from the user's mobile device
+            override fun onProductDisconnect() {
+                Log.i(ConnectionActivity.TAG, "onProductDisconnect: Product Disconnected")
+                connectionStatus.postValue(false) //setting connectionStatus to false
+            }
+            //called when the remote controller connects to the user's mobile device
+            override fun onProductConnect(baseProduct: BaseProduct?) {
+                Log.i(ConnectionActivity.TAG, "onProductConnect: Product Connected")
+                product.postValue(baseProduct)
+                connectionStatus.postValue(true) //setting connectionStatus to true
+            }
+            //called when the DJI aircraft changes
+            override fun onProductChanged(baseProduct: BaseProduct?) {
+                Log.i(ConnectionActivity.TAG, "onProductChanged: Product Changed - $baseProduct")
+                product.postValue(baseProduct)
+
+            }
+            //Called when a component object changes. This method is not called if the component is already disconnected
+            override fun onComponentChange(componentKey: BaseProduct.ComponentKey?, oldComponent: BaseComponent?, newComponent: BaseComponent?) {
+                //Alert the user which component has changed, and mention what new component replaced the old component (can be null)
+                Log.i(ConnectionActivity.TAG, "onComponentChange key: $componentKey, oldComponent: $oldComponent, newComponent: $newComponent")
+
+                //Listens to connectivity changes in each new component
+                newComponent?.let { component ->
+                    component.setComponentListener { connected ->
+                        Log.i(ConnectionActivity.TAG, "onComponentConnectivityChange: $connected")
+                    }
+                }
+            }
+            //called when loading SDK resources
+            override fun onInitProcess(p0: DJISDKInitEvent?, p1: Int) {}
+
+            //Called when Fly Safe database download progress is updated
+            override fun onDatabaseDownloadProgress(p0: Long, p1: Long) {}
+        })
+    }
+}
+```
+Connection Activity Layout: `activity_connection.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_connection_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Status: No Product Connected"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/text_product_info"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="89dp" />
+
+    <TextView
+        android:id="@+id/text_product_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="270dp"
+        android:text="@string/product_information"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/text_model_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="300dp"
+        android:text="@string/model_not_available"
+        android:textSize="15dp"/>
+
+    <Button
+        android:id="@+id/btn_open"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="350dp"
+        android:background="@drawable/round_btn"
+        android:text="Open"
+        android:textColor="@color/colorWhite"
+        android:textSize="20dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="430dp"
+        android:textSize="15dp"
+        android:id="@+id/textView2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="DJIVideoDecodingSample"
+        android:id="@+id/textView"
+        android:layout_marginTop="58dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/colorBlack"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
+```
 
 In order to create the `VideoDecodingApplication.kt` class, please add the following code to that file inside the com.riis.videodecoder package:
 
@@ -232,7 +681,7 @@ Open the `activity_main.xml` layout file and replace the code with the following
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.riis.videodecoder.MainActivity">
+    tools:context="com.dji.videostreamdecodingsample.MainActivity">
 
     <RelativeLayout
         android:id="@+id/main_title_rl"
@@ -353,10 +802,12 @@ Next, open the `colors.xml` file in the "values" folder and add the following co
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black_overlay">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
 </resources>
 ```
 
-Furthermore, visit the example project on the github page and open the drawable folder and copy its contents into the drawable folder of this project. Your drawable folder should have the following contents:
+Furthermore, visit the example project on the github page and open the [drawable folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/app/src/main/res/drawable) and copy its contents into the drawable folder of this project. Your drawable folder should have the following contents:
 
 <img src="./images/drawable.png" alt="drawing" width="500"/>
 
@@ -373,6 +824,41 @@ Now, if you open the `activity_maps.xml` file, and click on the Design tab on th
 #### 1. Update the Connection Status TextView
 
 Let's open `MainActivity.kt` file and add the following variables which will be later used throughout the activity:
+
+Please add the following imports.
+```kotlin
+import android.app.Activity
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.SurfaceTexture
+import android.graphics.YuvImage
+import android.media.MediaCodecInfo
+import android.media.MediaFormat
+import android.os.*
+import android.util.Log
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.TextureView
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import com.dji.videostreamdecodingsample.media.DJIVideoStreamDecoder
+import com.dji.videostreamdecodingsample.media.NativeHelper
+import dji.common.airlink.PhysicalSource
+import dji.common.camera.SettingsDefinitions
+import dji.common.error.DJIError
+import dji.common.product.Model
+import dji.sdk.airlink.OcuSyncLink
+import dji.sdk.base.BaseProduct
+import dji.sdk.camera.Camera
+import dji.sdk.camera.VideoFeeder
+import dji.sdk.codec.DJICodecManager
+import dji.sdk.sdkmanager.DJISDKManager
+import dji.thirdparty.afinal.core.AsyncTask
+import java.io.*
+import java.nio.ByteBuffer
+```
 
 ```kotlin
     private var surfaceCallback: SurfaceHolder.Callback? = null
@@ -497,6 +983,18 @@ Now, using the `onCreate` method, we will initialize the UI. If an M300 product 
             }
             else -> {}
         }
+    }
+
+    private fun showToast(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
+        )
+    }
+
+    private fun updateTitle(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_UPDATE_TITLE, s)
+        )
     }
 ```
 
@@ -1065,7 +1563,7 @@ As you can see above, the `handleYUVClick()` function is used to handle the clic
 
 ### Setting up NativeHelper.kt
 
-This singleton class is created in order to be able to invoke native methods. Start off by creating this class within the media package of the project. Firstly, start off by creating an interface within the class as shown below:
+This singleton class is created in order to be able to invoke native methods. Start off by creating the package `media` in `app -> java -> com -> dji -> videostreamdecodingsample`. Firstly, start off by creating an interface within the class as shown below:
 
 ```kotlin
 object NativeHelper {
@@ -1232,8 +1730,6 @@ class DJIVideoStreamDecoder private constructor() : NativeDataListener {
             false
         }
     }
-
-    ...
 }
 ```
 
@@ -1300,6 +1796,674 @@ Now, let's go list out each function and inner classes and define its purpose as
 
 * `override onDataRecv()` : Creates new DJI Frames and add them to a queue which then sends them to the data handler.
 
+All functions
+```kotlin
+    fun setYuvDataListener(yuvDataListener: YuvDataCallback?) {
+        this.yuvDataListener = yuvDataListener
+    }
+
+    private var yuvDataListener: YuvDataCallback? = null
+
+    /**
+     * A data structure for containing the frames.
+     */
+    private class DJIFrame(
+        var videoBuffer: ByteArray,
+        var size: Int,
+        var pts: Long,
+        var incomingTimeMs: Long,
+        var isKeyFrame: Boolean,
+        var frameNum: Int,
+        var frameIndex: Long,
+        var width: Int,
+        var height: Int
+    ) {
+        var fedIntoCodecTime: Long = 0
+        var codecOutputTime: Long = 0
+        val queueDelay: Long
+            get() = fedIntoCodecTime - incomingTimeMs
+        val decodingDelay: Long
+            get() = codecOutputTime - fedIntoCodecTime
+        val totalDelay: Long
+            get() = codecOutputTime - fedIntoCodecTime
+    }
+
+    private fun logd(tag: String, log: String) {
+        if (!DEBUG) {
+            return
+        }
+        Log.d(tag, log)
+    }
+
+    private fun loge(tag: String, log: String) {
+        if (!DEBUG) {
+            return
+        }
+        Log.e(tag, log)
+    }
+
+    private fun logd(log: String) {
+        logd(TAG, log)
+    }
+
+    private fun loge(log: String) {
+        loge(TAG, log)
+    }
+
+    /**
+     * Initialize the decoder
+     * @param context The application context
+     * @param surface The displaying surface for the video stream. What should be noted here is that the hardware decoder would not output
+     * any yuv data if a surface is configured into, which mean that if you want the yuv frames, you
+     * should set "null" surface when calling the "configure" method of MediaCodec.
+     */
+    fun init(context: Context?, surface: Surface?) {
+        this.context = context
+        this.surface = surface
+        NativeHelper.instance?.setDataListener(this)
+        if (dataHandler != null && !dataHandler!!.hasMessages(MSG_INIT_CODEC)) {
+            dataHandler!!.sendEmptyMessage(MSG_INIT_CODEC)
+        }
+    }
+
+    /**
+     * Framing the raw data from the camera.
+     * @param buf Raw data from camera.
+     * @param size Data length
+     */
+    fun parse(buf: ByteArray?, size: Int) {
+        val message = handlerNew.obtainMessage()
+        message.obj = buf
+        message.arg1 = size
+        handlerNew.sendMessage(message)
+    }
+
+    /**
+     * Get the resource ID of the IDR frame.
+     * @param pModel Product model of connecting DJI product.
+     * @param width Width of current video stream.
+     * @return Resource ID of the IDR frame
+     */
+    fun getIframeRawId(pModel: Model?, width: Int): Int {
+        var iframeId = R.raw.iframe_1280x720_ins
+        when (pModel) {
+            Model.PHANTOM_3_ADVANCED, Model.PHANTOM_3_STANDARD -> iframeId = if (width == 960) {
+                //for photo mode, 960x720, GDR
+                R.raw.iframe_960x720_3s
+            } else if (width == 640) {
+                R.raw.iframe_640x368_osmo_gop
+            } else {
+                //for record mode, 1280x720, GDR
+                R.raw.iframe_1280x720_3s
+            }
+            Model.INSPIRE_1 -> {
+                val cameraType = DataCameraGetPushStateInfo.getInstance().cameraType
+                if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeCV600) { //ZENMUSE_Z3
+                    iframeId = if (width == 960) {
+                        //for photo mode, 960x720, GDR
+                        R.raw.iframe_960x720_3s
+                    } else if (width == 640) {
+                        R.raw.iframe_640x368_osmo_gop
+                    } else {
+                        //for record mode, 1280x720, GDR
+                        R.raw.iframe_1280x720_3s
+                    }
+                }
+            }
+            Model.Phantom_3_4K -> iframeId = when (width) {
+                640 ->                         //for P3-4K with resolution 640*480
+                    R.raw.iframe_640x480
+                848 ->                         //for P3-4K with resolution 848*480
+                    R.raw.iframe_848x480
+                896 -> R.raw.iframe_896x480
+                960 ->                         //DJILog.i(TAG, "Selected Iframe=iframe_960x720_3s");
+                    //for photo mode, 960x720, GDR
+                    R.raw.iframe_960x720_3s
+                else -> R.raw.iframe_1280x720_3s
+            }
+            Model.OSMO -> iframeId = if (DataCameraGetPushStateInfo.getInstance().verstion >= 4) {
+                -1
+            } else {
+                R.raw.iframe_1280x720_ins
+            }
+            Model.OSMO_PLUS -> iframeId = if (width == 960) {
+                R.raw.iframe_960x720_osmo_gop
+            } else if (width == 1280) {
+                //for record mode, 1280x720, GDR
+                //DJILog.i(TAG, "Selected Iframe=iframe_1280x720_3s");
+                //                    iframeId = R.raw.iframe_1280x720_3s;
+                R.raw.iframe_1280x720_osmo_gop
+            } else if (width == 640) {
+                R.raw.iframe_640x368_osmo_gop
+            } else {
+                R.raw.iframe_1280x720_3s
+            }
+            Model.OSMO_PRO, Model.OSMO_RAW -> iframeId = R.raw.iframe_1280x720_ins
+            Model.MAVIC_PRO, Model.MAVIC_2 -> iframeId =
+                if ((DJISDKManager.getInstance().product as Aircraft).mobileRemoteController != null) {
+                    R.raw.iframe_1280x720_wm220
+                } else {
+                    -1
+                }
+            Model.Spark -> iframeId = when (width) {
+                1280 -> R.raw.iframe_1280x720_p4
+                1024 -> R.raw.iframe_1024x768_wm100
+                else -> R.raw.iframe_1280x720_p4
+            }
+            Model.MAVIC_AIR -> iframeId = when (height) {
+                960 -> R.raw.iframe_1280x960_wm230
+                720 -> R.raw.iframe_1280x720_wm230
+                else -> R.raw.iframe_1280x720_wm230
+            }
+            Model.PHANTOM_4 -> iframeId = R.raw.iframe_1280x720_p4
+            Model.PHANTOM_4_PRO, Model.PHANTOM_4_ADVANCED -> iframeId = when (width) {
+                1280 -> R.raw.iframe_p4p_720_16x9
+                960 -> R.raw.iframe_p4p_720_4x3
+                1088 -> R.raw.iframe_p4p_720_3x2
+                1344 -> R.raw.iframe_p4p_1344x720
+                1440 -> R.raw.iframe_1440x1088_wm620
+                1920 -> when (height) {
+                    1024 -> R.raw.iframe_1920x1024_wm620
+                    800 -> R.raw.iframe_1920x800_wm620
+                    else -> R.raw.iframe_1920x1088_wm620
+                }
+                else -> R.raw.iframe_p4p_720_16x9
+            }
+            Model.MATRICE_600, Model.MATRICE_600_PRO -> {
+                val cameraType = DataCameraGetPushStateInfo.getInstance().cameraType
+                iframeId = if (width == 720 && height == 480) {
+                    R.raw.iframe_720x480_m600
+                } else if (width == 720 && height == 576) {
+                    R.raw.iframe_720x576_m600
+                } else {
+                    if (width == 1280 && height == 720) {
+                        if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeGD600) {
+                            R.raw.iframe_gd600_1280x720
+                        } else if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeCV600) {
+                            R.raw.iframe_1280x720_osmo_gop
+                        } else if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeFC350) {
+                            R.raw.iframe_1280x720_ins
+                        } else {
+                            R.raw.iframe_1280x720_m600
+                        }
+                    } else if (width == 1920 && (height == 1080 || height == 1088)) {
+                        R.raw.iframe_1920x1080_m600
+                    } else if (width == 1080 && height == 720) {
+                        R.raw.iframe_1080x720_gd600
+                    } else if (width == 960 && height == 720) {
+                        R.raw.iframe_960x720_3s
+                    } else {
+                        -1
+                    }
+                }
+            }
+            Model.MATRICE_100 -> {
+                val cameraType = DataCameraGetPushStateInfo.getInstance().cameraType
+                iframeId =
+                    if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeGD600) {
+                        if (width == 1280 && height == 720) {
+                            R.raw.iframe_gd600_1280x720
+                        } else {
+                            R.raw.iframe_1080x720_gd600
+                        }
+                    } else {
+                        R.raw.iframe_1280x720_ins
+                    }
+            }
+            Model.MATRICE_200, Model.MATRICE_210, Model.MATRICE_210_RTK, Model.INSPIRE_2 -> {
+                val cameraType = DataCameraGetPushStateInfo.getInstance().getCameraType(0)
+                if (cameraType == DataCameraGetPushStateInfo.CameraType.DJICameraTypeGD600) {
+                    iframeId = R.raw.iframe_1080x720_gd600
+                } else {
+                    if (width == 640 && height == 368) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_640x368_wm620")
+                        iframeId = R.raw.iframe_640x368_wm620
+                    }
+                    if (width == 608 && height == 448) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_608x448_wm620")
+                        iframeId = R.raw.iframe_608x448_wm620
+                    } else if (width == 720 && height == 480) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_720x480_wm620")
+                        iframeId = R.raw.iframe_720x480_wm620
+                    } else if (width == 1280 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1280x720_wm620")
+                        iframeId = R.raw.iframe_1280x720_wm620
+                    } else if (width == 1080 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1080x720_wm620")
+                        iframeId = R.raw.iframe_1080x720_wm620
+                    } else if (width == 1088 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1088x720_wm620")
+                        iframeId = R.raw.iframe_1088x720_wm620
+                    } else if (width == 960 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_960x720_wm620")
+                        iframeId = R.raw.iframe_960x720_wm620
+                    } else if (width == 1360 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1360x720_wm620")
+                        iframeId = R.raw.iframe_1360x720_wm620
+                    } else if (width == 1344 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1344x720_wm620")
+                        iframeId = R.raw.iframe_1344x720_wm620
+                    } else if (width == 1440 && height == 1088) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1440x1088_wm620")
+                        iframeId = R.raw.iframe_1440x1088_wm620
+                    } else if (width == 1632 && height == 1080) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1632x1080_wm620")
+                        iframeId = R.raw.iframe_1632x1080_wm620
+                    } else if (width == 1760 && height == 720) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1760x720_wm620")
+                        iframeId = R.raw.iframe_1760x720_wm620
+                    } else if (width == 1920 && height == 800) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1920x800_wm620")
+                        iframeId = R.raw.iframe_1920x800_wm620
+                    } else if (width == 1920 && height == 1024) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1920x1024_wm620")
+                        iframeId = R.raw.iframe_1920x1024_wm620
+                    } else if (width == 1920 && height == 1088) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1920x1080_wm620")
+                        iframeId = R.raw.iframe_1920x1088_wm620
+                    } else if (width == 1920 && height == 1440) {
+                        DJILog.i(TAG, "Selected Iframe=iframe_1920x1440_wm620")
+                        iframeId = R.raw.iframe_1920x1440_wm620
+                    }
+                }
+            }
+            Model.PHANTOM_4_PRO_V2, Model.PHANTOM_4_RTK -> {
+                iframeId = -1
+            }
+            Model.MAVIC_AIR_2 -> {}
+            Model.MAVIC_2_ENTERPRISE, Model.MAVIC_2_ENTERPRISE_DUAL -> iframeId =
+                dji.midware.R.raw.iframe_1280x720_wm220
+            Model.MAVIC_2_ENTERPRISE_ADVANCED -> {}
+            else -> iframeId = R.raw.iframe_1280x720_ins
+        }
+        return iframeId
+    }
+
+    /** Get default black IDR frame.
+     * @param width Width of current video stream.
+     * @return IDR frame data
+     * @throws IOException
+     */
+    @Throws(IOException::class)
+    private fun getDefaultKeyFrame(width: Int): ByteArray? {
+        val product = DJISDKManager.getInstance().product
+        if (product == null || product.model == null) {
+            return null
+        }
+        val iframeId = getIframeRawId(product.model, width)
+        if (iframeId >= 0) {
+            val inputStream = context!!.resources.openRawResource(iframeId)
+            val length = inputStream.available()
+            logd("iframeId length=$length")
+            val buffer = ByteArray(length)
+            inputStream.read(buffer)
+            inputStream.close()
+            return buffer
+        }
+        return null
+    }
+
+    /**
+     * Initialize the hardware decoder.
+     */
+    private fun initCodec() {
+        if (width == 0 || height == 0) {
+            return
+        }
+        if (codec != null) {
+            releaseCodec()
+        }
+        loge("initVideoDecoder----------------------------------------------------------")
+        loge("initVideoDecoder video width = $width  height = $height")
+        // create the media format
+        val format = MediaFormat.createVideoFormat(VIDEO_ENCODING_FORMAT, width, height)
+        if (surface == null) {
+            logd("initVideoDecoder: yuv output")
+            // The surface is null, which means that the yuv data is needed, so the color format should
+            // be set to YUV420.
+            format.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar
+            )
+        } else {
+            logd("initVideoDecoder: display")
+            // The surface is set, so the color format should be set to format surface.
+            format.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
+            )
+        }
+        try {
+            // Create the codec instance.
+            codec = MediaCodec.createDecoderByType(VIDEO_ENCODING_FORMAT)
+            logd("initVideoDecoder create: " + (codec == null))
+            // Configure the codec. What should be noted here is that the hardware decoder would not output
+            // any yuv data if a surface is configured into, which mean that if you want the yuv frames, you
+            // should set "null" surface when calling the "configure" method of MediaCodec.
+            codec!!.configure(format, surface, null, 0)
+            logd("initVideoDecoder configure")
+            //            codec.configure(format, null, null, 0);
+            if (codec == null) {
+                loge("Can't find video info!")
+                return
+            }
+            // Start the codec
+            codec!!.start()
+        } catch (e: Exception) {
+            loge("init codec failed, do it again: $e")
+            e.printStackTrace()
+        }
+    }
+
+    private fun startDataHandler() {
+        if (dataHandlerThread != null && dataHandlerThread!!.isAlive) {
+            return
+        }
+        dataHandlerThread = HandlerThread("frame data handler thread")
+        dataHandlerThread!!.start()
+        dataHandler = object : Handler(dataHandlerThread!!.looper) {
+            override fun handleMessage(msg: Message) {
+                when (msg.what) {
+                    MSG_INIT_CODEC -> {
+                        try {
+                            initCodec()
+                        } catch (e: Exception) {
+                            loge("init codec error: " + e.message)
+                            e.printStackTrace()
+                        }
+                        removeCallbacksAndMessages(null)
+                        sendEmptyMessageDelayed(MSG_DECODE_FRAME, 1)
+                    }
+                    MSG_FRAME_QUEUE_IN -> {
+                        try {
+                            onFrameQueueIn(msg)
+                        } catch (e: Exception) {
+                            loge("queue in frame error: $e")
+                            e.printStackTrace()
+                        }
+                        if (!hasMessages(MSG_DECODE_FRAME)) {
+                            sendEmptyMessage(MSG_DECODE_FRAME)
+                        }
+                    }
+                    MSG_DECODE_FRAME -> try {
+                        decodeFrame()
+                    } catch (e: Exception) {
+                        loge("handle frame error: $e")
+                        if (e is CodecException) {
+                        }
+                        e.printStackTrace()
+                        initCodec()
+                    } finally {
+                        if (frameQueue!!.size > 0) {
+                            sendEmptyMessage(MSG_DECODE_FRAME)
+                        }
+                    }
+                    MSG_YUV_DATA -> {}
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    /**
+     * Stop the data processing thread
+     */
+    private fun stopDataHandler() {
+        if (dataHandlerThread == null || !dataHandlerThread!!.isAlive) {
+            return
+        }
+        if (dataHandler != null) {
+            dataHandler!!.removeCallbacksAndMessages(null)
+        }
+        if (Build.VERSION.SDK_INT >= 18) {
+            dataHandlerThread!!.quitSafely()
+        } else {
+            dataHandlerThread!!.quit()
+        }
+        try {
+            dataHandlerThread!!.join(3000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        releaseCodec()
+        dataHandler = null
+    }
+
+    /**
+     * Change the displaying surface of the decoder. What should be noted here is that the hardware decoder would not output
+     * any yuv data if a surface is configured into, which mean that if you want the yuv frames, you
+     * should set "null" surface when calling the "configure" method of MediaCodec.
+     * @param surface
+     */
+    fun changeSurface(surface: Surface?) {
+        if (this.surface !== surface) {
+            this.surface = surface
+            if (dataHandler != null && !dataHandler!!.hasMessages(MSG_INIT_CODEC)) {
+                dataHandler!!.sendEmptyMessage(MSG_INIT_CODEC)
+            }
+        }
+    }
+
+    /**
+     * Release and close the codec.
+     */
+    private fun releaseCodec() {
+        if (frameQueue != null) {
+            frameQueue.clear()
+            hasIFrameInQueue = false
+        }
+        if (codec != null) {
+            try {
+                codec!!.flush()
+            } catch (e: Exception) {
+                loge("flush codec error: " + e.message)
+            }
+            try {
+                codec!!.stop()
+                codec!!.release()
+            } catch (e: Exception) {
+                loge("close codec error: " + e.message)
+            } finally {
+                codec = null
+            }
+        }
+    }
+
+    /**
+     * Queue in the frame.
+     * @param msg
+     */
+    private fun onFrameQueueIn(msg: Message) {
+        val inputFrame = msg.obj as DJIFrame ?: return
+        if (!hasIFrameInQueue) { // check the I frame flag
+            if (inputFrame.frameNum != 1 && !inputFrame.isKeyFrame) {
+                loge("the timing for setting iframe has not yet come.")
+                return
+            }
+            var defaultKeyFrame: ByteArray? = null
+            try {
+                defaultKeyFrame = getDefaultKeyFrame(inputFrame.width) // Get I frame data
+            } catch (e: IOException) {
+                loge("get default key frame error: " + e.message)
+            }
+            if (defaultKeyFrame != null) {
+                val iFrame = DJIFrame(
+                    defaultKeyFrame,
+                    defaultKeyFrame.size,
+                    inputFrame.pts,
+                    System.currentTimeMillis(),
+                    inputFrame.isKeyFrame,
+                    0,
+                    inputFrame.frameIndex - 1,
+                    inputFrame.width,
+                    inputFrame.height
+                )
+                frameQueue!!.clear()
+                frameQueue.offer(iFrame) // Queue in the I frame.
+                logd("add iframe success!!!!")
+                hasIFrameInQueue = true
+            } else if (inputFrame.isKeyFrame) {
+                logd("onFrameQueueIn no need add i frame!!!!")
+                hasIFrameInQueue = true
+            } else {
+                loge("input key frame failed")
+            }
+        }
+        if (inputFrame.width != 0 && inputFrame.height != 0 &&
+            (inputFrame.width != width ||
+                    inputFrame.height != height)
+        ) {
+            width = inputFrame.width
+            height = inputFrame.height
+            /*
+    	    * On some devices, the codec supports changing of resolution during the fly
+    	    * However, on some devices, that is not the case.
+    	    * So, reset the codec in order to fix this issue.
+    	    */loge("init decoder for the 1st time or when resolution changes")
+            if (dataHandler != null && !dataHandler!!.hasMessages(MSG_INIT_CODEC)) {
+                dataHandler!!.sendEmptyMessage(MSG_INIT_CODEC)
+            }
+        }
+        // Queue in the input frame.
+        if (frameQueue!!.offer(inputFrame)) {
+            logd("put a frame into the Extended-Queue with index=" + inputFrame.frameIndex)
+        } else {
+            // If the queue is full, drop a frame.
+            val dropFrame = frameQueue.poll()
+            frameQueue.offer(inputFrame)
+            loge("Drop a frame with index=" + dropFrame.frameIndex + " and append a frame with index=" + inputFrame.frameIndex)
+        }
+    }
+
+    /**
+     * Dequeue the frames from the queue and decode them using the hardware decoder.
+     * @throws Exception
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Throws(Exception::class)
+    private fun decodeFrame() {
+        val inputFrame = frameQueue!!.poll() ?: return
+        if (codec == null) {
+            if (dataHandler != null && !dataHandler!!.hasMessages(MSG_INIT_CODEC)) {
+                dataHandler!!.sendEmptyMessage(MSG_INIT_CODEC)
+            }
+            return
+        }
+        val inIndex = codec!!.dequeueInputBuffer(0)
+
+        // Decode the frame using MediaCodec
+        if (inIndex >= 0) {
+            //Log.d(TAG, "decodeFrame: index=" + inIndex);
+            val buffer = codec!!.getInputBuffer(inIndex)
+            buffer!!.put(inputFrame.videoBuffer)
+            inputFrame.fedIntoCodecTime = System.currentTimeMillis()
+            val queueingDelay = inputFrame.queueDelay
+            // Feed the frame data to the decoder.
+            codec!!.queueInputBuffer(inIndex, 0, inputFrame.size, inputFrame.pts, 0)
+
+            // Get the output data from the decoder.
+            val outIndex = codec!!.dequeueOutputBuffer(bufferInfo, 0)
+            if (outIndex >= 0) {
+                //Log.d(TAG, "decodeFrame: outIndex: " + outIndex);
+                if (surface == null && yuvDataListener != null) {
+                    // If the surface is null, the yuv data should be get from the buffer and invoke the callback.
+                    logd("decodeFrame: need callback")
+                    val yuvDataBuf = codec!!.getOutputBuffer(outIndex)
+                    yuvDataBuf!!.position(bufferInfo.offset)
+                    yuvDataBuf.limit(bufferInfo.size - bufferInfo.offset)
+                    if (yuvDataListener != null) {
+                        yuvDataListener!!.onYuvDataReceived(
+                            codec!!.outputFormat,
+                            yuvDataBuf,
+                            bufferInfo.size - bufferInfo.offset,
+                            width,
+                            height
+                        )
+                    }
+                }
+                // All the output buffer must be release no matter whether the yuv data is output or
+                // not, so that the codec can reuse the buffer.
+                codec!!.releaseOutputBuffer(outIndex, true)
+            } else if (outIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+                // The output buffer set is changed. So the decoder should be reinitialized and the
+                // output buffers should be retrieved.
+                val curTime = System.currentTimeMillis()
+                bufferChangedQueue.addLast(curTime)
+                if (bufferChangedQueue.size >= 10) {
+                    val headTime = bufferChangedQueue.pollFirst()
+                    if (curTime - headTime < 1000) {
+                        // reset decoder
+                        loge("Reset decoder. Get INFO_OUTPUT_BUFFERS_CHANGED more than 10 times within a second.")
+                        bufferChangedQueue.clear()
+                        dataHandler!!.removeCallbacksAndMessages(null)
+                        dataHandler!!.sendEmptyMessage(MSG_INIT_CODEC)
+                        return
+                    }
+                }
+            } else if (outIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                loge("format changed, color: " + codec!!.outputFormat.getInteger(MediaFormat.KEY_COLOR_FORMAT))
+            }
+        } else {
+            codec!!.flush()
+        }
+    }
+
+    /**
+     * Stop the decoding process.
+     */
+    fun stop() {
+        if (dataHandler != null) {
+            dataHandler!!.removeCallbacksAndMessages(null)
+        }
+        if (frameQueue != null) {
+            frameQueue.clear()
+            hasIFrameInQueue = false
+        }
+        if (codec != null) {
+            try {
+                codec!!.flush()
+            } catch (e: IllegalStateException) {
+            }
+        }
+        stopDataHandler()
+    }
+
+    fun resume() {
+        startDataHandler()
+    }
+
+    fun destroy() {}
+    override fun onDataRecv(
+        data: ByteArray?,
+        size: Int,
+        frameNum: Int,
+        isKeyFrame: Boolean,
+        width: Int,
+        height: Int
+    ) {
+        if (dataHandler == null || dataHandlerThread == null || !dataHandlerThread!!.isAlive) {
+            return
+        }
+        if (data != null) {
+            if (data.size != size) {
+                loge("recv data size: " + size + ", data lenght: " + data.size)
+            } else {
+                logd(
+                    "recv data size: " + size + ", frameNum: " + frameNum + ", isKeyframe: " + isKeyFrame + "," +
+                            " width: " + width + ", height: " + height
+                )
+                currentTime = System.currentTimeMillis()
+                frameIndex++
+                val newFrame = DJIFrame(
+                    data, size, currentTime, currentTime, isKeyFrame,
+                    frameNum, frameIndex.toLong(), width, height
+                )
+                dataHandler!!.obtainMessage(MSG_FRAME_QUEUE_IN, newFrame).sendToTarget()
+            }
+        }
+    }
+```
+
 #### Importing the h264 Files as a Raw Resource and adding the JNI Libraries
 
 This is a necessary step for the decoder to work. The decoder needs to know the size of the h264 file and the file itself. The easiest way to do this is to reference the h264 file as a raw resource.
@@ -1316,7 +2480,8 @@ Then, copy all the contents within the `raw` folder under `External Libraries` i
 
 <img src="./images/raw_contents.png" width="50%">
 
-Finally, add the `libs` folder to your project.
+Finally, add the `libs` [folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/libs) to the root of your project. Then create the directory `jniLibs` under the `app` folder. Copy and paste the `libs` directory files into the `jniLibs` directory.
+
 
 ---
 
