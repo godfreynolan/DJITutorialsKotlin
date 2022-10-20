@@ -6,7 +6,7 @@
 
 In this tutorial, you will learn how to use `FFmpeg` for video frame parsing and to use the `MediaCodec` for hardware decoding. It will help to parse video frames and decode the raw video stream data from DJI Camera and output the YUV data.
 
-You can download the tutorial's final sample project from this [Github Page](https://github.com/riisinterns/VideoDecoder).
+You can download the tutorial's final sample project from this [Github Page](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder).
 
 > Note: In this tutorial, we will use Mavic Pro for testing and use Android Studio 3.0 for developing the demo application.
 
@@ -32,7 +32,7 @@ This part is important as it will help us to setup the project with the latest l
 
 #### 1. Create the project
 
-Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoDecoder"`. Enter the company domain and package name `(com.dji.videostreamdecodingsample)` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
+Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoDecoder"`. Enter the company domain and package name `(com.dji.videostreamdecodingsample)` you want and press Next. Set the mimimum SDK version as `API 21: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
 
 #### 2. Add Some String Resources
 
@@ -53,7 +53,12 @@ Please edit `strings.xml` and add the following resources below.
 
 Specify the permissions of your application needs, by adding `<uses-permission>` elements as children of the `<manifest>` element in the `AndroidManifest.xml` file.
 
+Complete AndroidManifest.xml file for this project
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.riis.videodecoder">
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -80,25 +85,12 @@ Specify the permissions of your application needs, by adding `<uses-permission>`
     <uses-feature
         android:name="android.hardware.usb.accessory"
         android:required="true"/>
-```
-
-In the code above, we specify the permissions of your application needs by adding `<uses-permission>` elements as children of the `<manifest>` element.
-
-Moreover, because not all Android-powered devices are guaranteed to support the USB accessory and host APIs, include two elements that declare that your application uses the "android.hardware.usb.accessory" and "android.hardware.usb.host" feature.
-
-Finally, we need to specify the requirement for OpenGL ES version 2.
-
-For more details of description on the permissions, refer to https://developers.google.com/maps/documentation/android/config.
-
-Furthermore, let's replace the `<application>` element with the followings:
-
-```xml
     <application
-        android:name=".VideoDecodingApplication"
+        android:name=".MApplication"
         android:allowBackup="true"
         android:label="@string/app_name_decoding_sample"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VideoDecoder">
+        android:theme="@style/Theme.VideoDecoderDemo">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
@@ -126,7 +118,19 @@ Furthermore, let's replace the `<application>` element with the followings:
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     </application>
+
+</manifest>
 ```
+
+In the code above, we specify the permissions of your application needs by adding `<uses-permission>` elements as children of the `<manifest>` element.
+
+Moreover, because not all Android-powered devices are guaranteed to support the USB accessory and host APIs, include two elements that declare that your application uses the "android.hardware.usb.accessory" and "android.hardware.usb.host" feature.
+
+Finally, we need to specify the requirement for OpenGL ES version 2.
+
+For more details of description on the permissions, refer to https://developers.google.com/maps/documentation/android/config.
+
+Furthermore, let's replace the `<application>` element with the followings:
 
 Create the `accessory_filter.xml` file under `app -> res -> xml` (create the xml directory if needed). Add the following code to the file
 ```xml
@@ -137,47 +141,13 @@ Create the `accessory_filter.xml` file under `app -> res -> xml` (create the xml
 </resources>
 ```
 
-Please enter the **App Key** of the application in the value part of `android:name="com.dji.sdk.API_KEY"` attribute. For more details of the `AndroidManifest.xml` file, please check this tutorial's Github source code of the demo project.
-
-#### 4. Adding Multidex Support with Gradle
-
-We need to add Multidex support to avoid the 64K limit with Gradle.
-
-Modify the module-level `build.gradle` file configuration to include the support library and enable multidex output in both **defaultConfig** and **dependencies** parts, as shown in the following code snippet:
-
-```gradle
-android {
-    compileSdkVersion 32
-
-    defaultConfig {
-        ...
-        minSdkVersion 22
-        targetSdkVersion 32
-        ...
-        
-        // Enabling multidex support.
-        multiDexEnabled true
-    }
-    ...
-}
-
-dependencies {
-  ...
-  implementation 'androidx.multidex:multidex:2.0.1'
-}
-```
-
-In the code above, we declare the "compileSdkVersion", "buildToolsVersion", "minSdkVersion" and "targetSdkVersion".
-
-Then select **Tools->Android->Sync Project** with Gradle Files to sync the gradle files.
-
-For more details about configuring your App for Multidex with Gradle, please check this link: <http://developer.android.com/tools/building/multidex.html>.
+Please enter the **App Key** of the application in the value part of `android:name="com.dji.sdk.API_KEY"` attribute. **One has already been provided for you**. For more details of the `AndroidManifest.xml` file, please check this tutorial's Github source code of the demo project.
 
 ---
 
 ### Importing the DJI Dependencies
 
-Please follow [Lab Three: Camera](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Use the following gradle files for this tutorial.
+Please follow [Lab Three: Camera](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/3-Camera) tutorial to learn how to import the Android SDK Maven Dependency for DJI. **Use the following gradle files for this tutorial**
 
 ### Build.gradle (Project)
 ```kotlin
@@ -807,7 +777,67 @@ Next, open the `colors.xml` file in the "values" folder and add the following co
 </resources>
 ```
 
-Furthermore, visit the example project on the github page and open the [drawable folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/app/src/main/res/drawable) and copy its contents into the drawable folder of this project. Your drawable folder should have the following contents:
+Furthermore, visit the example project on the github page and open the [drawable folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/app/src/main/res/drawable) and copy its contents into the drawable folder of this project. The XML files can be found below but the `.png` files will still need to be copied. 
+
+Create `round_btn.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/round_btn_normal" android:state_focused="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_selected="true"></item>
+    <item android:drawable="@drawable/round_btn_pressed" android:state_pressed="true"></item>
+    <item android:drawable="@drawable/round_btn_disable" android:state_enabled="false"></item>
+    <item android:drawable="@drawable/round_btn_normal" ></item>
+</selector>
+```
+
+Create `round_btn_disable.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AAAAAAAA" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+Create `round_btn_normal.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF314268" />
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp"/>
+</shape>
+```
+Create `round_btn_pressed.xml` under `app/res/drawable`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AA314268" />
+    <corners android:topLeftRadius="10dp"
+             android:topRightRadius="10dp"
+             android:bottomRightRadius="10dp"
+             android:bottomLeftRadius="10dp"/>
+</shape>
+```
+
+Create `selector_back_button.xml` under `app/res/drawable`
+```xml
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+    <item android:drawable="@drawable/back_button_normal" android:state_pressed="false"></item>
+    <item android:drawable="@drawable/back_button_press" android:state_pressed="true"></item>   
+    <item android:drawable="@drawable/back_button_disable" android:state_enabled="false" ></item>  
+
+ </selector>
+```
+
+
+Your drawable folder should have the following contents:
 
 <img src="./images/drawable.png" alt="drawing" width="500"/>
 
@@ -825,7 +855,7 @@ Now, if you open the `activity_maps.xml` file, and click on the Design tab on th
 
 Let's open `MainActivity.kt` file and add the following variables which will be later used throughout the activity:
 
-Please add the following imports.
+
 ```kotlin
 import android.app.Activity
 import android.graphics.ImageFormat
@@ -1672,8 +1702,6 @@ Finally, load the native libraries in `init` and create a getter for the NativeH
 ---
 
 ### Programming the DJIVideoStreamDecoder Utility Class
-
-> NOTE: THIS CLASS IS VERY LARGE SO NOT ALL OF IT IS SHOWN HERE. PLEASE REFER TO THE DJIVideoStreamDecoder.kt FILE FOR MORE INFORMATION.
 
 The first thing to note is that the entire decoding process is implemented through `FFmpeg` and `MediaCodec`. According to the tutorial on the official website, `DJIVideoStreamDecoder.kt` and `NativeHelper.kt` are the key classes for decoding.
 
