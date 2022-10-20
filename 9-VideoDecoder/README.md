@@ -88,7 +88,7 @@ Complete AndroidManifest.xml file for this project
         android:allowBackup="true"
         android:label="@string/app_name_decoding_sample"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VideoStreamDecodingSample">
+        android:theme="@style/AppTheme">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
@@ -154,6 +154,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
@@ -654,7 +655,7 @@ Open the `activity_main.xml` layout file and replace the code with the following
         android:id="@+id/main_title_rl"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:background="@color/purple_200">
+        android:background="@color/title_dark">
 
         <TextView
             android:id="@+id/title_tv"
@@ -678,12 +679,12 @@ Open the `activity_main.xml` layout file and replace the code with the following
 
     <SurfaceView
         android:id="@+id/livestream_preview_sf"
-        android:layout_width="360dp"
-        android:layout_height="180dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/main_title_rl"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_below="@id/main_title_rl"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="150dp"
@@ -734,17 +735,18 @@ Open the `activity_main.xml` layout file and replace the code with the following
         android:layout_width="400dp"
         android:layout_height="match_parent"
         android:padding="5dp"
-        android:background="@color/purple_200"
-        android:layout_toEndOf="@id/activity_main_screen_shot"
-        android:layout_alignParentEnd="true"
+        android:background="@color/title_dark"
+        android:layout_toRightOf="@id/activity_main_screen_shot"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/main_title_rl"
-        android:textColor="@color/white"
+        android:textColor="@color/colorWhite"
         android:visibility="invisible"
         android:scrollbars="vertical"
         android:gravity="bottom"
-        tools:ignore="NotSibling" />
+        />
 
 </RelativeLayout>
+
 ```
 
 In the xml file, we implement the following UIs:
@@ -773,6 +775,23 @@ Next, open the `colors.xml` file in the "values" folder and add the following co
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
 </resources>
+```
+
+Delete the `themes` folder with the `themes.xml` files. Create `styles.xml` under `app/res/values/`. Replace the the code with the following:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!-- Base application theme. -->
+<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+</style>
+
+</resources>
+
 ```
 
 Furthermore, visit the example project on the github page and open the [drawable folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/app/src/main/res/drawable) and copy its contents into the drawable folder of this project. The XML files can be found below but the `.png` files will still need to be copied. 
@@ -854,20 +873,14 @@ Let's open `MainActivity.kt` file and replace all code with the following:
 ```kotlin
 package com.dji.videostreamdecodingsample
 
+import android.app.Activity
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.graphics.YuvImage
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
-import android.os.AsyncTask
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.os.*
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -882,36 +895,18 @@ import dji.common.airlink.PhysicalSource
 import dji.common.camera.SettingsDefinitions
 import dji.common.error.DJIError
 import dji.common.product.Model
+import dji.sdk.airlink.OcuSyncLink
 import dji.sdk.base.BaseProduct
 import dji.sdk.camera.Camera
 import dji.sdk.camera.VideoFeeder
 import dji.sdk.codec.DJICodecManager
 import dji.sdk.sdkmanager.DJISDKManager
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import dji.thirdparty.afinal.core.AsyncTask
+import java.io.*
 import java.nio.ByteBuffer
 
-class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        initUi()
-        if (isM300Product) {
-            // If your MutltipleLensCamera is set at right or top, you need to change the PhysicalSource to RIGHT_CAM or TOP_CAM.
-            VideoDecodingApplication.productInstance?.airLink?.ocuSyncLink?.assignSourceToPrimaryChannel(
-                PhysicalSource.LEFT_CAM, PhysicalSource.FPV_CAM
-            ) { error: DJIError? ->
-                if (error == null) {
-                    showToast("assignSourceToPrimaryChannel success.")
-                } else {
-                    showToast("assignSourceToPrimaryChannel fail, reason: " + error.description)
-                }
-            }
-        }
-    }
+
+class MainActivity : Activity(), DJICodecManager.YuvDataCallback {
     private var surfaceCallback: SurfaceHolder.Callback? = null
 
     private enum class DemoType {
@@ -945,28 +940,82 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
     private var videoViewWidth = 0
     private var videoViewHeight = 0
     private var count = 0
-
-
-    private val isTranscodedVideoFeedNeeded: Boolean
-        get() = if (VideoFeeder.getInstance() == null) {
-            false
-        } else VideoFeeder.getInstance().isFetchKeyFrameNeeded || VideoFeeder.getInstance()
-            .isLensDistortionCalibrationNeeded
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
-        private const val MSG_WHAT_SHOW_TOAST = 0
-        private const val MSG_WHAT_UPDATE_TITLE = 1
-        private var demoType: DemoType? = DemoType.USE_TEXTURE_VIEW
-        val isM300Product: Boolean
-            get() {
-                if (DJISDKManager.getInstance().product == null) {
-                    return false
-                }
-                val model: Model = DJISDKManager.getInstance().product.model
-                return model === Model.MATRICE_300_RTK
-            }
+    override fun onResume() {
+        super.onResume()
+        initSurfaceOrTextureView()
+        notifyStatusChange()
     }
+
+    private fun initSurfaceOrTextureView() {
+        when (demoType) {
+            DemoType.USE_SURFACE_VIEW -> initPreviewerSurfaceView()
+            DemoType.USE_SURFACE_VIEW_DEMO_DECODER -> {
+                /**
+                 * we also need init the textureView because the pre-transcoded video steam will display in the textureView
+                 */
+                initPreviewerTextureView()
+                /**
+                 * we use standardVideoFeeder to pass the transcoded video data to DJIVideoStreamDecoder, and then display it
+                 * on surfaceView
+                 */
+                initPreviewerSurfaceView()
+            }
+            DemoType.USE_TEXTURE_VIEW -> initPreviewerTextureView()
+            else -> {}
+        }
+    }
+
+    override fun onPause() {
+        if (mCamera != null) {
+            VideoFeeder.getInstance().primaryVideoFeed
+                .removeVideoDataListener(mReceivedVideoDataListener)
+            standardVideoFeeder?.removeVideoDataListener(mReceivedVideoDataListener)
+        }
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        if (mCodecManager != null) {
+            mCodecManager!!.cleanSurface()
+            mCodecManager!!.destroyCodec()
+        }
+        super.onDestroy()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        initUi()
+        if (MainActivity.isM300Product) {
+            val ocuSyncLink: OcuSyncLink? =
+                VideoDecodingApplication.productInstance?.airLink?.ocuSyncLink
+            // If your MutltipleLensCamera is set at right or top, you need to change the PhysicalSource to RIGHT_CAM or TOP_CAM.
+            if (ocuSyncLink != null) {
+                ocuSyncLink.assignSourceToPrimaryChannel(
+                    PhysicalSource.LEFT_CAM, PhysicalSource.FPV_CAM
+                ) { error: DJIError? ->
+                    if (error == null) {
+                        showToast("assignSourceToPrimaryChannel success.")
+                    } else {
+                        showToast("assignSourceToPrimaryChannel fail, reason: " + error.description)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showToast(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
+        )
+    }
+
+    private fun updateTitle(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_UPDATE_TITLE, s)
+        )
+    }
+
     private fun initUi() {
         savePath = findViewById<View>(R.id.activity_main_save_path) as TextView
         screenShot = findViewById<View>(R.id.activity_main_screen_shot) as Button
@@ -1009,30 +1058,7 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             else -> {}
         }
     }
-    override fun onResume() {
-        super.onResume()
-        initSurfaceOrTextureView()
-        notifyStatusChange()
-    }
 
-    private fun initSurfaceOrTextureView() {
-        when (demoType) {
-            DemoType.USE_SURFACE_VIEW -> initPreviewerSurfaceView()
-            DemoType.USE_SURFACE_VIEW_DEMO_DECODER -> {
-                /**
-                 * we also need init the textureView because the pre-transcoded video steam will display in the textureView
-                 */
-                initPreviewerTextureView()
-                /**
-                 * we use standardVideoFeeder to pass the transcoded video data to DJIVideoStreamDecoder, and then display it
-                 * on surfaceView
-                 */
-                initPreviewerSurfaceView()
-            }
-            DemoType.USE_TEXTURE_VIEW -> initPreviewerTextureView()
-            else -> {}
-        }
-    }
     private var lastupdate: Long = 0
     private fun notifyStatusChange() {
         val product: BaseProduct? = VideoDecodingApplication.productInstance
@@ -1118,28 +1144,11 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             }
         }
     }
-    override fun onPause() {
-        if (mCamera != null) {
-            VideoFeeder.getInstance().primaryVideoFeed
-                .removeVideoDataListener(mReceivedVideoDataListener)
-            standardVideoFeeder?.removeVideoDataListener(mReceivedVideoDataListener)
-        }
-        super.onPause()
-    }
 
-    override fun onDestroy() {
-        if (mCodecManager != null) {
-            mCodecManager!!.cleanSurface()
-            mCodecManager!!.destroyCodec()
-        }
-        super.onDestroy()
-    }
-
-    private fun updateTitle(s: String) {
-        mainHandler.sendMessage(
-            mainHandler.obtainMessage(MSG_WHAT_UPDATE_TITLE, s)
-        )
-    }
+    /**
+     * Init a fake texture view to for the codec manager, so that the video raw data can be received
+     * by the camera
+     */
     private fun initPreviewerTextureView() {
         videostreamPreviewTtView!!.surfaceTextureListener = object :
             TextureView.SurfaceTextureListener {
@@ -1183,6 +1192,10 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
         }
     }
+
+    /**
+     * Init a surface view for the DJIVideoStreamDecoder
+     */
     private fun initPreviewerSurfaceView() {
         videostreamPreviewSh = videostreamPreviewSf!!.holder
         surfaceCallback = object : SurfaceHolder.Callback {
@@ -1248,6 +1261,7 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
         }
         videostreamPreviewSh!!.addCallback(surfaceCallback)
     }
+
     override fun onYuvDataReceived(
         format: MediaFormat,
         yuvFrame: ByteBuffer?,
@@ -1261,21 +1275,23 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             val bytes = ByteArray(dataSize)
             yuvFrame[bytes]
             //DJILog.d(TAG, "onYuvDataReceived2 " + dataSize);
-            AsyncTask.execute {
+            AsyncTask.execute(Runnable {
                 // two samples here, it may has other color format.
                 when (format.getInteger(MediaFormat.KEY_COLOR_FORMAT)) {
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible ->     //                        //NV12
-                        //COLOR_FormatYUV420SemiPlanar
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar ->                             //NV12
                         if (Build.VERSION.SDK_INT <= 23) {
                             oldSaveYuvDataToJPEG(bytes, width, height)
                         } else {
                             newSaveYuvDataToJPEG(bytes, width, height)
                         }
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar ->                             //YUV420P
+                        newSaveYuvDataToJPEG420P(bytes, width, height)
                     else -> {}
                 }
-            }
+            })
         }
     }
+
     // For android API <= 23
     private fun oldSaveYuvDataToJPEG(yuvFrame: ByteArray, width: Int, height: Int) {
         if (yuvFrame.size < width * height) {
@@ -1340,6 +1356,7 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             )
         }
     }
+
     private fun newSaveYuvDataToJPEG(yuvFrame: ByteArray, width: Int, height: Int) {
         if (yuvFrame.size < width * height) {
             //DJILog.d(TAG, "yuvFrame size is too small " + yuvFrame.length);
@@ -1372,6 +1389,39 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             )
         }
     }
+
+    private fun newSaveYuvDataToJPEG420P(yuvFrame: ByteArray, width: Int, height: Int) {
+        if (yuvFrame.size < width * height) {
+            return
+        }
+        val length = width * height
+        val u = ByteArray(width * height / 4)
+        val v = ByteArray(width * height / 4)
+        for (i in u.indices) {
+            u[i] = yuvFrame[length + i]
+            v[i] = yuvFrame[length + u.size + i]
+        }
+        for (i in u.indices) {
+            yuvFrame[length + 2 * i] = v[i]
+            yuvFrame[length + 2 * i + 1] = u[i]
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            screenShot(
+                yuvFrame,
+                applicationContext.getExternalFilesDir("DJI")!!.path + "/DJI_ScreenShot",
+                width,
+                height
+            )
+        } else {
+            screenShot(
+                yuvFrame,
+                Environment.getExternalStorageDirectory().toString() + "/DJI_ScreenShot",
+                width,
+                height
+            )
+        }
+    }
+
     /**
      * Save the buffered data into a JPG image file
      */
@@ -1418,18 +1468,6 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
         runOnUiThread { displayPath(path) }
     }
 
-    private fun displayPath(_path: String) {
-        var path = _path
-        if (stringBuilder == null) {
-            stringBuilder = StringBuilder()
-        }
-        path = """
-            $path
-            
-            """.trimIndent()
-        stringBuilder!!.append(path)
-        savePath!!.text = stringBuilder.toString()
-    }
     fun onClick(v: View) {
         if (v.id == R.id.activity_main_screen_shot) {
             handleYUVClick()
@@ -1495,10 +1533,39 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
             savePath!!.visibility = View.VISIBLE
         }
     }
-    private fun showToast(s: String) {
-        mainHandler.sendMessage(
-            mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
-        )
+
+    private fun displayPath(_path: String) {
+        var path = _path
+        if (stringBuilder == null) {
+            stringBuilder = StringBuilder()
+        }
+        path = """
+            $path
+            
+            """.trimIndent()
+        stringBuilder!!.append(path)
+        savePath!!.text = stringBuilder.toString()
+    }
+
+    private val isTranscodedVideoFeedNeeded: Boolean
+        get() = if (VideoFeeder.getInstance() == null) {
+            false
+        } else VideoFeeder.getInstance().isFetchKeyFrameNeeded || VideoFeeder.getInstance()
+            .isLensDistortionCalibrationNeeded
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+        private const val MSG_WHAT_SHOW_TOAST = 0
+        private const val MSG_WHAT_UPDATE_TITLE = 1
+        private var demoType: DemoType? = DemoType.USE_TEXTURE_VIEW
+        val isM300Product: Boolean
+            get() {
+                if (DJISDKManager.getInstance().product == null) {
+                    return false
+                }
+                val model: Model = DJISDKManager.getInstance().product.model
+                return model === Model.MATRICE_300_RTK
+            }
     }
 }
 ```
