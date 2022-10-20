@@ -424,6 +424,7 @@ package com.riis.mapviewdemo
 import dji.sdk.base.BaseProduct
 import dji.sdk.camera.Camera
 import dji.sdk.flightcontroller.FlightController
+import dji.sdk.gimbal.Gimbal
 import dji.sdk.products.Aircraft
 import dji.sdk.products.HandHeld
 import dji.sdk.sdkmanager.DJISDKManager
