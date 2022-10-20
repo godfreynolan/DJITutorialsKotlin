@@ -168,6 +168,7 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        jcenter()
     }
 }
 
@@ -770,6 +771,7 @@ Next, open the `colors.xml` file in the "values" folder and add the following co
     <color name="white">#FFFFFFFF</color>
     <color name="black_overlay">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
 </resources>
 ```
 
