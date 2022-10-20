@@ -228,7 +228,7 @@ dependencies {
 
     //DJI Dependencies
     implementation 'androidx.multidex:multidex:2.0.0'
-    implementation ('com.dji:dji-sdk:4.16', {
+    implementation ('com.dji:dji-sdk:4.16.1', {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
@@ -236,7 +236,7 @@ dependencies {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
-    compileOnly ('com.dji:dji-sdk-provided:4.16')
+    compileOnly ('com.dji:dji-sdk-provided:4.16.1')
 
     //Mapbox
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
