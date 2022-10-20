@@ -802,8 +802,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.btn_waypoint1).setOnClickListener(clickListener) 
-        // set the listener to the previously defined clickListener
-        findViewById<View>(R.id.btn_waypoint2).setOnClickListener(clickListener)
     }
 
     private fun startActivity(context: Context, activity: Class<*>?) { 
