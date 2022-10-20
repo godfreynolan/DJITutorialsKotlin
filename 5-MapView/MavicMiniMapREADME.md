@@ -1484,7 +1484,7 @@ For the configuration dialogue layout let's create a new xml file named `dialog_
 
 This xml file will help to setup a textView to enter "Altitude" and create a RadioButton Group for selecting **Speed**
 
-Now, if you check the `dialog_waypointsetting.xml` file, you should see something similar to the screenshot of Waypoint Configuration Dialog below:
+Now, if you check the `dialog_waypointsetting.xml` file, you should see something similar to the screenshot of Waypoint Configuration Dialog, minus action after finished and heading, below:
 
 <img src="./images/waypoint1-configuration.png" alt="drawing" width="200"/>
 
