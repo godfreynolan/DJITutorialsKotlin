@@ -899,7 +899,7 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
         initUi()
         if (isM300Product) {
             // If your MutltipleLensCamera is set at right or top, you need to change the PhysicalSource to RIGHT_CAM or TOP_CAM.
-            MApplication.productInstance?.airLink?.ocuSyncLink?.assignSourceToPrimaryChannel(
+            VideoDecodingApplication.productInstance?.airLink?.ocuSyncLink?.assignSourceToPrimaryChannel(
                 PhysicalSource.LEFT_CAM, PhysicalSource.FPV_CAM
             ) { error: DJIError? ->
                 if (error == null) {
@@ -1033,7 +1033,7 @@ class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
     }
     private var lastupdate: Long = 0
     private fun notifyStatusChange() {
-        val product: BaseProduct? = MApplication.productInstance
+        val product: BaseProduct? = VideoDecodingApplication.productInstance
         Log.d(
             TAG,
             "notifyStatusChange: " + when {
@@ -2486,12 +2486,10 @@ Afterwards, open up the `res` folder within there.
 
 <img src="./images/res_dir.png" width="50%">
 
-Then, copy all the contents within the `raw` folder under `External Libraries` into your local `raw` folder within `res`.
-
+Then, copy all the contents within the `raw` folder under `External Libraries` into your local `raw` folder within `res`. If a local `raw` folder has not been created, then create one by `Right Clicking` the `res` folder under `app`. Then `New -> Directory`. and name it `raw` and press `enter`.
 <img src="./images/raw_contents.png" width="50%">
 
-Finally, add the `libs` [folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/libs) to the root of your project. Then create the directory `jniLibs` under the `app` folder. Copy and paste the `libs` directory files into the `jniLibs` directory.
-
+Finally, add the `libs` [folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/libs) to the root of your project.
 
 ---
 
