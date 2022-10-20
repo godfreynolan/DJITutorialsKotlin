@@ -32,7 +32,7 @@ This part is important as it will help us to setup the project with the latest l
 
 #### 1. Create the project
 
-Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoDecoder"`. Enter the company domain and package name `(com.dji.videostreamdecodingsample)` you want and press Next. Set the mimimum SDK version as `API 21: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
+Open Android Studio and select **File -> New -> New Project** to create a new project, named `"VideoStreamDecodingSample"`. Enter the company domain and package name `(com.dji.videostreamdecodingsample)` and press Next. Set the mimimum SDK version as `API 21: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
 
 #### 2. Add Some String Resources
 
@@ -51,14 +51,12 @@ Please edit `strings.xml` and add the following resources below.
 
 #### 3. Android Manifest Permissions
 
-Specify the permissions of your application needs, by adding `<uses-permission>` elements as children of the `<manifest>` element in the `AndroidManifest.xml` file.
-
 Complete AndroidManifest.xml file for this project
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.riis.videodecoder">
+    package="com.dji.videostreamdecodingsample">
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -90,7 +88,7 @@ Complete AndroidManifest.xml file for this project
         android:allowBackup="true"
         android:label="@string/app_name_decoding_sample"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VideoDecoderDemo">
+        android:theme="@style/Theme.VideoStreamDecodingSample">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
@@ -126,13 +124,13 @@ In the code above, we specify the permissions of your application needs by addin
 
 Moreover, because not all Android-powered devices are guaranteed to support the USB accessory and host APIs, include two elements that declare that your application uses the "android.hardware.usb.accessory" and "android.hardware.usb.host" feature.
 
+Please enter the **App Key** of the application in the value part of `android:name="com.dji.sdk.API_KEY"` attribute. **One has already been provided for you**.
+
 Finally, we need to specify the requirement for OpenGL ES version 2.
 
 For more details of description on the permissions, refer to https://developers.google.com/maps/documentation/android/config.
 
-Furthermore, let's replace the `<application>` element with the followings:
-
-Create the `accessory_filter.xml` file under `app -> res -> xml` (create the xml directory if needed). Add the following code to the file
+Create the `accessory_filter.xml` file under `app/res/xml` (create the xml directory if needed). Add the following code to the file
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -140,8 +138,6 @@ Create the `accessory_filter.xml` file under `app -> res -> xml` (create the xml
     <usb-accessory model="AG410" manufacturer="DJI"/>
 </resources>
 ```
-
-Please enter the **App Key** of the application in the value part of `android:name="com.dji.sdk.API_KEY"` attribute. **One has already been provided for you**. For more details of the `AndroidManifest.xml` file, please check this tutorial's Github source code of the demo project.
 
 ---
 
@@ -260,7 +256,7 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     //DJI Dependencies
     implementation 'androidx.multidex:multidex:2.0.0'
-    implementation ('com.dji:dji-sdk:4.16', {
+    implementation ('com.dji:dji-sdk:4.16.1', {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
@@ -268,7 +264,7 @@ dependencies {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
-    compileOnly ('com.dji:dji-sdk-provided:4.16')
+    compileOnly ('com.dji:dji-sdk-provided:4.16.1')
 
     // ViewModels and Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
@@ -296,7 +292,7 @@ dependencies {
 ```
 ### Settings.gradle
 ```kotlin
-rootProject.name = "Decoder"
+rootProject.name = "VideoStreamDecodingSample"
 include ':app'
 ```
 
@@ -315,11 +311,10 @@ To improve the user experience, we had better create an activity to show the con
 
 <img src="./images/connection_page.jpg" alt="drawing" width="200"/>
 
-> Never mind the *MavicMini* name on the connection page, it was only used for testing the connection status.
-
 Here are the necessary connection files from the previous tutorials
-### Connection Activity: `ConnectionActivity.kt`
+Connection Activity: `ConnectionActivity.kt`
 ```kotlin
+package com.dji.videostreamdecodingsample
 import android.Manifest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -437,8 +432,9 @@ class ConnectionActivity : AppCompatActivity() {
     }
 }
 ```
-### Connection View Model: `ConnectionViewModel.kt`
+Connection View Model: `ConnectionViewModel.kt`
 ```kotlin
+package com.dji.videostreamdecodingsample
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -601,10 +597,10 @@ Connection Activity Layout: `activity_connection.xml`
 </RelativeLayout>
 ```
 
-In order to create the `VideoDecodingApplication.kt` class, please add the following code to that file inside the com.riis.videodecoder package:
+Create the `VideoDecodingApplication.kt` class in the package com.dji.videostreamdecodingsample. Please add the following code to the file:
 
 ```kotlin
-package com.riis.videodecoder
+package com.dji.videostreamdecodingsample
 
 import android.app.Application
 import android.content.Context
@@ -851,20 +847,25 @@ Now, if you open the `activity_maps.xml` file, and click on the Design tab on th
 
 > NOTE: This section is a more in depth version of the previous section. The main steps for converting the video stream data into images are implemented in `MainActivity.kt`. These images get transmitted to the android system in the YUV format and is stored as such. The total number of image frames is controlled by `DJIVIdeoStreamDecoder.getInstance()`.
 
-#### 1. Update the Connection Status TextView
-
-Let's open `MainActivity.kt` file and add the following variables which will be later used throughout the activity:
-
+Let's open `MainActivity.kt` file and replace all code with the following:
 
 ```kotlin
-import android.app.Activity
+package com.dji.videostreamdecodingsample
+
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.graphics.YuvImage
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
-import android.os.*
+import android.os.AsyncTask
+import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -879,18 +880,36 @@ import dji.common.airlink.PhysicalSource
 import dji.common.camera.SettingsDefinitions
 import dji.common.error.DJIError
 import dji.common.product.Model
-import dji.sdk.airlink.OcuSyncLink
 import dji.sdk.base.BaseProduct
 import dji.sdk.camera.Camera
 import dji.sdk.camera.VideoFeeder
 import dji.sdk.codec.DJICodecManager
 import dji.sdk.sdkmanager.DJISDKManager
-import dji.thirdparty.afinal.core.AsyncTask
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.nio.ByteBuffer
-```
 
-```kotlin
+class MainActivity : AppCompatActivity(), DJICodecManager.YuvDataCallback {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        initUi()
+        if (isM300Product) {
+            // If your MutltipleLensCamera is set at right or top, you need to change the PhysicalSource to RIGHT_CAM or TOP_CAM.
+            MApplication.productInstance?.airLink?.ocuSyncLink?.assignSourceToPrimaryChannel(
+                PhysicalSource.LEFT_CAM, PhysicalSource.FPV_CAM
+            ) { error: DJIError? ->
+                if (error == null) {
+                    showToast("assignSourceToPrimaryChannel success.")
+                } else {
+                    showToast("assignSourceToPrimaryChannel fail, reason: " + error.description)
+                }
+            }
+        }
+    }
     private var surfaceCallback: SurfaceHolder.Callback? = null
 
     private enum class DemoType {
@@ -946,32 +965,6 @@ import java.nio.ByteBuffer
                 return model === Model.MATRICE_300_RTK
             }
     }
-```
-
-#### 2. Working on Initializing the UI
-
-Now, using the `onCreate` method, we will initialize the UI. If an M300 product is being used, we will change the physical video source to the right cam or the top cam. To do this, we use the `isM300Product` companion object variable to check if the product is an M300 product. The code snippet looks like the following:
-
-```kotlin
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        initUi()
-        if (isM300Product) {
-            // If your MutltipleLensCamera is set at right or top, you need to change the PhysicalSource to RIGHT_CAM or TOP_CAM.
-            VideoDecodingApplication.productInstance?.airLink?.ocuSyncLink?.assignSourceToPrimaryChannel(
-                PhysicalSource.LEFT_CAM, PhysicalSource.FPV_CAM
-            ) { error: DJIError? ->
-                if (error == null) {
-                    showToast("assignSourceToPrimaryChannel success.")
-                } else {
-                    showToast("assignSourceToPrimaryChannel fail, reason: " + error.description)
-                }
-            }
-        }
-    }
-
     private fun initUi() {
         savePath = findViewById<View>(R.id.activity_main_save_path) as TextView
         screenShot = findViewById<View>(R.id.activity_main_screen_shot) as Button
@@ -1014,29 +1007,6 @@ Now, using the `onCreate` method, we will initialize the UI. If an M300 product 
             else -> {}
         }
     }
-
-    private fun showToast(s: String) {
-        mainHandler.sendMessage(
-            mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
-        )
-    }
-
-    private fun updateTitle(s: String) {
-        mainHandler.sendMessage(
-            mainHandler.obtainMessage(MSG_WHAT_UPDATE_TITLE, s)
-        )
-    }
-```
-
-In the code above, we invoke the `initUi()` method to initialize all the TextViews, Buttons, SurfaceViews, and TextureViews. The video stream preview surface view is set to be clickable by setting a click listener. When it is clicked, the transcoding data rate is received from the video feeder, and the rate is displayed on the screen as a toast. Next, if the rate is less than 10Mbps, we set the rate to 10Mbps. Otherwise, we set the rate to 3Mbps.
-
-After the UI is initialized, we update the UI visibility according to the `demoType` variable using the `updateUIVisibility()` method. If the demo type is `USE_TEXTURE_VIEW`, the TextureView is visible. If the demo type is `USE_SURFACE_VIEW`, the SurfaceView is visible. If the demo type is `USE_SURFACE_VIEW_DEMO_DECODER`, both the SurfaceView and the TextureView are visible.
-
-#### 3. Implementing the Video Feed on the UI
-
-Next, let's implement the `override onResume()` method to initialize the surface or texture view or to notify status changes. The code snippet looks like the following:
-
-```kotlin
     override fun onResume() {
         super.onResume()
         initSurfaceOrTextureView()
@@ -1061,16 +1031,9 @@ Next, let's implement the `override onResume()` method to initialize the surface
             else -> {}
         }
     }
-```
-
-In the code above, based on the `demoType` variable, we initialize the surface or texture view. If the demo type is `USE_SURFACE_VIEW`, we initialize the previewer surface view. If the demo type is `USE_SURFACE_VIEW_DEMO_DECODER`, we initialize both of the previewer texture and surface views. FInally, if the demo type is `USE_TEXTURE_VIEW`, we just initialize the previewer texture view.
-
-Along with this, we also need to notify the status change. The code snippet looks like the following:
-
-```kotlin
     private var lastupdate: Long = 0
     private fun notifyStatusChange() {
-        val product: BaseProduct? = VideoDecodingApplication.productInstance
+        val product: BaseProduct? = MApplication.productInstance
         Log.d(
             TAG,
             "notifyStatusChange: " + when {
@@ -1153,19 +1116,6 @@ Along with this, we also need to notify the status change. The code snippet look
             }
         }
     }
-```
-
-In the code above, we start off by updating the title of the activity. If the product is connected, we update the title with the product model name and the demo type. If the product is not connected, we update the title with the string `Disconnected`.
-
-Next, we update a listener to receive the raw H264 video data for camera live view. Based on the `demoType` variable, we use the `sendDataToDecoder()` method to send the raw H264 video data to the decoder if the demo type is `USE_SURFACE_VIEW` or `USE_TEXTURE_VIEW`. Whereas, if the demo type is `USE_SURFACE_VIEW_DEMO_DECODER` we use `standardVideoFeeder` to pass the transcoded video data to `DJIVideoStreamDecoder.kt`, and then display it on surfaceView.
-
-Then, we check if the product is connected and the product model is not `UNKNOWN_AIRCRAFT`. If the product is connected and the product model is not `UNKNOWN_AIRCRAFT`, we get the camera instance from the product. If the camera is not null, we check if the camera is flat camera mode supported and then set the flat mode to `PHOTO_SINGLE` otherwise, we set the mode of the camera to `SHOOT_PHOTO`. If there is any error during this process, we show the error messages on the screen with a toast.
-
-FInally, we then check if the demo type is `USE_SURFACE_VIEW_DEMO_DECODER` and the `isTranscodedVideoFeedNeeded` is true. If so, we get the instance of the `standardVideoFeeder` and add the `mReceivedVideoDataListener` to the `standardVideoFeeder`. If the demo type is not `USE_SURFACE_VIEW_DEMO_DECODER` or the `isTranscodedVideoFeedNeeded` is false, we get the instance of the `primaryVideoFeed` and add the `mReceivedVideoDataListener` to the `primaryVideoFeed`.
-
-In the code snippet below, we implement the `override onDestroy()` and `override onPause()` methods. In the `onDestroy()` method, we clean the surface of the codec manager and destroy it. In the `onPause()` method, we remove the video data listener from the `primaryVideoFeed` and the `standardVideoFeeder`.
-
-```kotlin
     override fun onPause() {
         if (mCamera != null) {
             VideoFeeder.getInstance().primaryVideoFeed
@@ -1182,15 +1132,12 @@ In the code snippet below, we implement the `override onDestroy()` and `override
         }
         super.onDestroy()
     }
-```
 
-#### 4. Initializing the Surface and Texture Views
-
-This section implements some of the methods described in the last section.
-
-The code snippet below initializes a fake texture view to for the codec manager, so that the video raw data can be received by the camera:
-
-```kotlin
+    private fun updateTitle(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_UPDATE_TITLE, s)
+        )
+    }
     private fun initPreviewerTextureView() {
         videostreamPreviewTtView!!.surfaceTextureListener = object :
             TextureView.SurfaceTextureListener {
@@ -1234,11 +1181,6 @@ The code snippet below initializes a fake texture view to for the codec manager,
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
         }
     }
-```
-
-Similarly, the code snippet below initializes a surface view to pass the transcoded video data into the `DJIVideoStreamDecoder.kt` which then later displays it on the surface view:
-
-```kotlin
     private fun initPreviewerSurfaceView() {
         videostreamPreviewSh = videostreamPreviewSf!!.holder
         surfaceCallback = object : SurfaceHolder.Callback {
@@ -1304,13 +1246,6 @@ Similarly, the code snippet below initializes a surface view to pass the transco
         }
         videostreamPreviewSh!!.addCallback(surfaceCallback)
     }
-```
-
-#### 5. Implementing the override methods of the DJICodecManager.YuvDataCallback and Saving YUV Images
-
-In order to do this, the MainActivity class should implement `DJICodecManager.YuvDataCallback` and override the `override onYuvDataReceived()` method. This method looks like the following:
-
-```kotlin
     override fun onYuvDataReceived(
         format: MediaFormat,
         yuvFrame: ByteBuffer?,
@@ -1339,13 +1274,6 @@ In order to do this, the MainActivity class should implement `DJICodecManager.Yu
             }
         }
     }
-```
-
-In the code above, the `yuvFrame` is a `ByteBuffer` that contains the YUV data. The `dataSize` is the size of the YUV data. The `width` and `height` are the width and height of the YUV data. Given the current YUV media format and the current sdk version, either the old or the new method of saving the YUV data to JPEG files will be used or the new one.
-
-The old method is shown below:
-
-```kotlin
     // For android API <= 23
     private fun oldSaveYuvDataToJPEG(yuvFrame: ByteArray, width: Int, height: Int) {
         if (yuvFrame.size < width * height) {
@@ -1410,11 +1338,6 @@ The old method is shown below:
             )
         }
     }
-```
-
-The code below shows the new method of saving the YUV data to JPEG files:
-
-```kotlin
     private fun newSaveYuvDataToJPEG(yuvFrame: ByteArray, width: Int, height: Int) {
         if (yuvFrame.size < width * height) {
             //DJILog.d(TAG, "yuvFrame size is too small " + yuvFrame.length);
@@ -1447,11 +1370,6 @@ The code below shows the new method of saving the YUV data to JPEG files:
             )
         }
     }
-```
-
-They both essentially do the same thing and saves the YUV data to JPEG files. They also both use the `screenShot()` function to save the YUV frame to JPEG. Here is a snippet below:
-
-```kotlin
     /**
      * Save the buffered data into a JPG image file
      */
@@ -1510,16 +1428,6 @@ They both essentially do the same thing and saves the YUV data to JPEG files. Th
         stringBuilder!!.append(path)
         savePath!!.text = stringBuilder.toString()
     }
-
-```
-
-As you can see above, this code snippet is mostly self explanatory. It saves the YUV frame into a folder called `DJI_ScreenShot` and saves the image with its current time stamp. The `displayPath()` function is used to display the path of the saved image.
-
-#### 6. Handling the onClick events
-
-Consider the code snippets below:
-
-```kotlin
     fun onClick(v: View) {
         if (v.id == R.id.activity_main_screen_shot) {
             handleYUVClick()
@@ -1585,17 +1493,69 @@ Consider the code snippets below:
             savePath!!.visibility = View.VISIBLE
         }
     }
+    private fun showToast(s: String) {
+        mainHandler.sendMessage(
+            mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
+        )
+    }
+}
 ```
 
-As you can see above, the `handleYUVClick()` function is used to handle the click event of the `screenShot` button. Once clicked, the save directory of each screenshot will be shown in the `savePath` text view. Aside from that, the rest of the `onClick()` options for the buttons are used to switch to different demo type views.
+### What we did in `MainActivity.kt`
+#### 1. Initalize UI
+1. Now, in the `onCreate` method, we initialized the UI. If an M300 product is being used, we change the physical video source to the right cam or the top cam. To do this, we used the `isM300Product` companion object variable to check if the product is an M300 product.
+
+2. We invoked the `initUi()` method to initialize all the TextViews, Buttons, SurfaceViews, and TextureViews. The video stream preview surface view is set to be clickable by setting a click listener. When it is clicked, the transcoding data rate is received from the video feeder, and the rate is displayed on the screen as a toast. Next, if the rate is less than 10Mbps, we set the rate to 10Mbps. Otherwise, we set the rate to 3Mbps.
+
+3. After the UI is initialized, we updated the UI visibility according to the `demoType` variable using the `updateUIVisibility()` method. If the demo type is `USE_TEXTURE_VIEW`, the TextureView is visible. If the demo type is `USE_SURFACE_VIEW`, the SurfaceView is visible. If the demo type is `USE_SURFACE_VIEW_DEMO_DECODER`, both the SurfaceView and the TextureView are visible.
+
+4. Next, we implemented the `override onResume()` method to initialize the surface or texture view or to notify status changes. 
+
+5. We initialized the surface or texture view based on the `demoType` variable. If the demo type is `USE_SURFACE_VIEW`, we initialize the previewer surface view. If the demo type is `USE_SURFACE_VIEW_DEMO_DECODER`, we initialize both of the previewer texture and surface views. Finally, if the demo type is `USE_TEXTURE_VIEW`, we just initialize the previewer texture view.
+
+6. We then notify the status change with the function `notifyStatusChange()` In this function we update the title of the activity. If the product is connected, we update the title with the product model name and the demo type. If the product is not connected, we update the title with the string `Disconnected`.
+
+7. Next, we updated a listener to receive the raw H264 video data for camera live view. Based on the `demoType` variable, we use the `sendDataToDecoder()` method to send the raw H264 video data to the decoder if the demo type is `USE_SURFACE_VIEW` or `USE_TEXTURE_VIEW`. Whereas, if the demo type is `USE_SURFACE_VIEW_DEMO_DECODER` we use `standardVideoFeeder` to pass the transcoded video data to `DJIVideoStreamDecoder.kt`, and then display it on surfaceView.
+
+8. Then, we check if the product is connected and the product model is not `UNKNOWN_AIRCRAFT`. If the product is connected and the product model is not `UNKNOWN_AIRCRAFT`, we get the camera instance from the product. If the camera is not null, we check if the camera is flat camera mode supported and then set the flat mode to `PHOTO_SINGLE` otherwise, we set the mode of the camera to `SHOOT_PHOTO`. If there is any error during this process, we show the error messages on the screen with a toast.
+
+9. Finally, we then check if the demo type is `USE_SURFACE_VIEW_DEMO_DECODER` and the `isTranscodedVideoFeedNeeded` is true. If so, we get the instance of the `standardVideoFeeder` and add the `mReceivedVideoDataListener` to the `standardVideoFeeder`. If the demo type is not `USE_SURFACE_VIEW_DEMO_DECODER` or the `isTranscodedVideoFeedNeeded` is false, we get the instance of the `primaryVideoFeed` and add the `mReceivedVideoDataListener` to the `primaryVideoFeed`.
+
+10. We implemented the `override onDestroy()` and `override onPause()` methods. In the `onDestroy()` method, we clean the surface of the codec manager and destroy it. In the `onPause()` method, we remove the video data listener from the `primaryVideoFeed` and the `standardVideoFeeder`.
+
+#### 2. Initializing the Surface and Texture Views
+
+1. The function `initPrevieweerTextureView()` initializes a fake texture view to for the codec manager, so that the video raw data can be received by the camera:
+
+
+2. Similarly, the function `initPreviewerSurfaceView()` initializes a surface view to pass the transcoded video data into the `DJIVideoStreamDecoder.kt` which then later displays it on the surface view:
+
+
+#### 3. Implementing the override methods of the DJICodecManager.YuvDataCallback and Saving YUV Images
+1. We made `MainActivity` class implement `DJICodecManager.YuvDataCallback` and `override onYuvDataReceived()` method.The `yuvFrame` is a `ByteBuffer` that contains the YUV data. The `dataSize` is the size of the YUV data. The `width` and `height` are the width and height of the YUV data. Given the current YUV media format and the current sdk version, either the old or the new method of saving the YUV data to JPEG files will be used or the new one.
+
+2. The function `oldSaveYuvDataToJPEG` is the old method.
+
+3. We implemented the new method of saving YUV data to JPEG files in the function `newSaveYuvDataToJPEG()`.
+
+4. We implemented the function `screenshot()` function to save the YUV frame to JPEG. 
+
+5. We created the `displayPath()` function to display the path of the saved image.
+
+#### 4. Handling the onClick events
+
+1. We created the `handleYUVClick()` function to handle the click event of the `screenShot` button. Once clicked, the save directory of each screenshot will be shown in the `savePath` text view. Aside from that, the rest of the `onClick()` options for the buttons are used to switch to different demo type views.
 
 ---
 
 ### Setting up NativeHelper.kt
 
-This singleton class is created in order to be able to invoke native methods. Start off by creating the package `media` in `app -> java -> com -> dji -> videostreamdecodingsample`. Firstly, start off by creating an interface within the class as shown below:
+This singleton class is created in order to be able to invoke native methods. Start off by creating the package `media` in `app/java/com/dji/videostreamdecodingsample` . Create the file `NativeHelper.kt` and replace all the code with the following:
 
+Native Helper: `NativeHelper.kt`
 ```kotlin
+package com.dji.videostreamdecodingsample.media
+
 object NativeHelper {
     interface NativeDataListener {
         /**
@@ -1618,22 +1578,10 @@ object NativeHelper {
             height: Int
         )
     }
-    ...
-}
-```
-
-Next, create a local variable and a setter for the NativeDataListener interface as shown below:
-
-```kotlin
     private var dataListener: NativeDataListener? = null
     fun setDataListener(dataListener: NativeDataListener?) {
         this.dataListener = dataListener
     }
-```
-
-The functions below are external functions that can be invoked from the native libraries and as such must be defined. Each function has comments explaining the function's purpose.
-
-```kotlin
     //JNI
     /**
      * Test the ffmpeg.
@@ -1683,21 +1631,23 @@ The functions below are external functions that can be invoked from the native l
             dataListener!!.onDataRecv(buf, size, frameNum, isKeyFrame, width, height)
         }
     }
-```
-
-Finally, load the native libraries in `init` and create a getter for the NativeHelper instance as shown below:
-
-```kotlin
     val instance: NativeHelper
-    get() {
-        return this
-    }
+        get() {
+            return this
+        }
 
     init {
         System.loadLibrary("ffmpeg")
         System.loadLibrary("djivideojni")
     }
+}
 ```
+### What we did in `NativeHelper.kt`
+1. Created a local variable and a setter for the `NativeDataListener` interface.
+
+2. Created external functions that can be invoked from the native libraries and as such must be defined. Each function has comments explaining the function's purpose.
+
+3. Finally, we loaded the native libraries in `init` and created a getter for the `NativeHelper` instance.
 
 ---
 
@@ -1705,65 +1655,60 @@ Finally, load the native libraries in `init` and create a getter for the NativeH
 
 The first thing to note is that the entire decoding process is implemented through `FFmpeg` and `MediaCodec`. According to the tutorial on the official website, `DJIVideoStreamDecoder.kt` and `NativeHelper.kt` are the key classes for decoding.
 
-This class is a helper class for hardware decoding. Please follow the following steps to use it:
+Begin by creating a new class `DJIVideoStreamDecoder.kt` within the `media` package.
 
-1. Initialize and set the instance as a listener of NativeDataListener to receive the frame data.
-
-2. Send the raw data from camera to ffmpeg for frame parsing.
-
-3. Get the parsed frame data from ffmpeg parsing frame callback and cache the parsed framed data into the frameQueue.
-
-4. Initialize the MediaCodec as a decoder and then check whether there is any i-frame in the MediaCodec. If not, get the default i-frame from sdk resource and insert it at the head of frameQueue. Then dequeue the framed data from the frameQueue and feed it(which is Byte buffer) into the MediaCodec.
-
-5. Get the output byte buffer from MediaCodec, if a surface(Video Previewing View) is configured in the MediaCodec, the output byte buffer is only need to be released. If not, the output yuv data should invoke the callback and pass it out to external listener, it should also be released too.
-
-6. Release the ffmpeg and the MediaCodec, stop the decoding thread.
-
-Begin by creating a new class `DJIVideoStreamDecoder.kt` within the `media` package. Additionally, implement a companion object and init blocks as shown below (most of its members are self-explanatory):
-
+DJI Video Stream Decoder: `DJIVideoStreamDecoder.kt`
 ```kotlin
-class DJIVideoStreamDecoder private constructor() : NativeDataListener {
+package com.dji.videostreamdecodingsample.media
 
-    ...
+import android.os.HandlerThread
+import android.media.MediaCodec
+import dji.sdk.codec.DJICodecManager.YuvDataCallback
+import dji.midware.data.model.P3.DataCameraGetPushStateInfo
+import dji.sdk.sdkmanager.DJISDKManager
+import dji.sdk.products.Aircraft
+import dji.log.DJILog
+import kotlin.Throws
+import dji.sdk.base.BaseProduct
+import android.media.MediaFormat
+import android.media.MediaCodecInfo
+import android.media.MediaCodec.CodecException
+import android.os.Build
+import android.annotation.TargetApi
+import android.content.Context
+import android.os.Handler
+import android.os.Message
+import android.util.Log
+import android.view.Surface
+import com.dji.videostreamdecodingsample.R
+import dji.common.product.Model
+import java.io.IOException
+import java.lang.Exception
+import java.lang.IllegalStateException
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import kotlin.jvm.Synchronized
 
-    companion object {
-        private val TAG = DJIVideoStreamDecoder::class.java.simpleName
-        private const val BUF_QUEUE_SIZE = 30
-        private const val MSG_INIT_CODEC = 0
-        private const val MSG_FRAME_QUEUE_IN = 1
-        private const val MSG_DECODE_FRAME = 2
-        private const val MSG_YUV_DATA = 3
-        const val VIDEO_ENCODING_FORMAT = "video/avc"
-
-        @get:Synchronized
-        var instance: DJIVideoStreamDecoder? = null
-            get() {
-                if (field == null) {
-                    field = DJIVideoStreamDecoder()
-                }
-                return field
-            }
-            private set
-    }
-
-    init {
-        createTime = System.currentTimeMillis()
-        frameQueue = ArrayBlockingQueue(BUF_QUEUE_SIZE)
-        startDataHandler()
-        handlerThreadNew = HandlerThread("native parser thread")
-        handlerThreadNew.start()
-        handlerNew = Handler(handlerThreadNew.looper) { msg ->
-            val buf = msg.obj as ByteArray
-            NativeHelper.instance?.parse(buf, msg.arg1)
-            false
-        }
-    }
-}
-```
-
-Next, add the following class variables:
-
-```kotlin
+/**
+ * This class is a helper class for hardware decoding. Please follow the following steps to use it:
+ *
+ * 1. Initialize and set the instance as a listener of NativeDataListener to receive the frame data.
+ *
+ * 2. Send the raw data from camera to ffmpeg for frame parsing.
+ *
+ * 3. Get the parsed frame data from ffmpeg parsing frame callback and cache the parsed framed data into the frameQueue.
+ *
+ * 4. Initialize the MediaCodec as a decoder and then check whether there is any i-frame in the MediaCodec. If not, get
+ * the default i-frame from sdk resource and insert it at the head of frameQueue. Then dequeue the framed data from the
+ * frameQueue and feed it(which is Byte buffer) into the MediaCodec.
+ *
+ * 5. Get the output byte buffer from MediaCodec, if a surface(Video Previewing View) is configured in the MediaCodec,
+ * the output byte buffer is only need to be released. If not, the output yuv data should invoke the callback and pass
+ * it out to external listener, it should also be released too.
+ *
+ * 6. Release the ffmpeg and the MediaCodec, stop the decoding thread.
+ */
+class DJIVideoStreamDecoder private constructor() : NativeHelper.NativeDataListener {
     private val handlerThreadNew: HandlerThread
     private val handlerNew: Handler
     private val DEBUG = false
@@ -1781,51 +1726,14 @@ Next, add the following class variables:
     var bufferInfo = MediaCodec.BufferInfo()
     var bufferChangedQueue = LinkedList<Long>()
     private val createTime: Long
-    private var yuvDataListener: YuvDataCallback? = null
-```
 
-Now, let's go list out each function and inner classes and define its purpose as follows:
-
-> NOTE: Please go through the sample project to understand and implement each function in more detail.
-
-* `setYuvDataListener()`: Sets the yuv frame data receiving callback. The callback method will be invoked when the decoder output yuv frame data. What should be noted here is that the hardware decoder would not output any yuv data if a surface is configured into, which mean that if you want the yuv frames, you should set "null" surface when calling the "configure" method of MediaCodec.
-
-* `private class DJIFrame` : A data structure for containing the frames.
-
-* `logd()` : Prints a debug log message
-
-* `loge()` : Prints an error log message
-
-* `init()` : Initializes the decoder.
-
-* `parse()` : Frames the raw data from the camera.
-
-* `getIframeRawId()` : Gets the resource ID of the IDR frame.
-
-* `getDefaultKeyFrame()` : Gets the default black IDR frame.
-
-* `initCodec()` : Initializes and starts the hardware decoder.
-
-* `startDataHandler()` : Starts the data handler thread and handles frame data sent to it.
-
-* `stopDataHandler()` : Stops the data handler thread and safely quits.
-
-* `changeSurface()` : Changes the displaying surface of the decoder. What should be noted here is that the hardware decoder would not output any yuv data if a surface is configured into, which mean that if you want the yuv frames, you should set "null" surface when calling the "configure" method of MediaCodec.
-
-* `releaseCodec()` : Releases and closes the codec.
-
-* `onFrameQueueIn()` : Queues in the input frame.
-
-* `decodeFrame()` : Dequeue the frames from the queue and decode them using the hardware decoder.
-
-* `stop()` : Stops the decoding process.
-
-* `resume()` : Resumes the decoding process.
-
-* `override onDataRecv()` : Creates new DJI Frames and add them to a queue which then sends them to the data handler.
-
-All functions
-```kotlin
+    /**
+     * Set the yuv frame data receiving callback. The callback method will be invoked when the decoder
+     * output yuv frame data. What should be noted here is that the hardware decoder would not output
+     * any yuv data if a surface is configured into, which mean that if you want the yuv frames, you
+     * should set "null" surface when calling the "configure" method of MediaCodec.
+     * @param yuvDataListener
+     */
     fun setYuvDataListener(yuvDataListener: YuvDataCallback?) {
         this.yuvDataListener = yuvDataListener
     }
@@ -2461,6 +2369,7 @@ All functions
     }
 
     fun destroy() {}
+
     override fun onDataRecv(
         data: ByteArray?,
         size: Int,
@@ -2490,7 +2399,80 @@ All functions
             }
         }
     }
+
+    companion object {
+        private val TAG = DJIVideoStreamDecoder::class.java.simpleName
+        private const val BUF_QUEUE_SIZE = 30
+        private const val MSG_INIT_CODEC = 0
+        private const val MSG_FRAME_QUEUE_IN = 1
+        private const val MSG_DECODE_FRAME = 2
+        private const val MSG_YUV_DATA = 3
+        const val VIDEO_ENCODING_FORMAT = "video/avc"
+
+        @get:Synchronized
+        var instance: DJIVideoStreamDecoder? = null
+            get() {
+                if (field == null) {
+                    field = DJIVideoStreamDecoder()
+                }
+                return field
+            }
+            private set
+    }
+
+    init {
+        createTime = System.currentTimeMillis()
+        frameQueue = ArrayBlockingQueue(BUF_QUEUE_SIZE)
+        startDataHandler()
+        handlerThreadNew = HandlerThread("native parser thread")
+        handlerThreadNew.start()
+        handlerNew = Handler(handlerThreadNew.looper) { msg ->
+            val buf = msg.obj as ByteArray
+            NativeHelper.instance?.parse(buf, msg.arg1)
+            false
+        }
+    }
+}
 ```
+### What we did in `DJIVideoStreamDecoder.kt`
+1. Created class variables
+
+2. Created the following functions
+    * `setYuvDataListener()`: Sets the yuv frame data receiving callback. The callback method will be invoked when the decoder output yuv frame data. What should be noted here is that the hardware decoder would not output any yuv data if a surface is configured into, which mean that if you want the yuv frames, you should set "null" surface when calling the "configure" method of MediaCodec.
+
+    * `private class DJIFrame` : A data structure for containing the frames.
+
+    * `logd()` : Prints a debug log message
+
+    * `loge()` : Prints an error log message
+
+    * `init()` : Initializes the decoder.
+
+    * `parse()` : Frames the raw data from the camera.
+
+    * `getIframeRawId()` : Gets the resource ID of the IDR frame.
+
+    * `getDefaultKeyFrame()` : Gets the default black IDR frame.
+
+    * `initCodec()` : Initializes and starts the hardware decoder.
+
+    * `startDataHandler()` : Starts the data handler thread and handles frame data sent to it.
+
+    * `stopDataHandler()` : Stops the data handler thread and safely quits.
+
+    * `changeSurface()` : Changes the displaying surface of the decoder. What should be noted here is that the hardware decoder would not output any yuv data if a surface is configured into, which mean that if you want the yuv frames, you should set "null" surface when calling the "configure" method of MediaCodec.
+
+    * `releaseCodec()` : Releases and closes the codec.
+
+    * `onFrameQueueIn()` : Queues in the input frame.
+
+    * `decodeFrame()` : Dequeue the frames from the queue and decode them using the hardware decoder.
+
+    * `stop()` : Stops the decoding process.
+
+    * `resume()` : Resumes the decoding process.
+
+    * `override onDataRecv()` : Creates new DJI Frames and add them to a queue which then sends them to the data handler.
 
 #### Importing the h264 Files as a Raw Resource and adding the JNI Libraries
 
