@@ -84,7 +84,7 @@ Complete AndroidManifest.xml file for this project
         android:name="android.hardware.usb.accessory"
         android:required="true"/>
     <application
-        android:name=".MApplication"
+        android:name=".VideoDecodingApplication"
         android:allowBackup="true"
         android:label="@string/app_name_decoding_sample"
         android:supportsRtl="true"
