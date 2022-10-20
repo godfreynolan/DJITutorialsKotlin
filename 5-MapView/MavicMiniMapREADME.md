@@ -83,7 +83,7 @@ Specify the permissions of your application needs, by adding `<uses-permission>`
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MapviewWalkthrough"
+        android:theme="@style/Theme.MapviewDemo"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
