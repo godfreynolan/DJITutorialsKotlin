@@ -32,7 +32,8 @@ Open Android Studio and select **File -> New -> New Project** to create a new pr
 
 #### 2. Install the Mapbox SDK
 
-To complete this, follow the steps in the following link: <https://docs.mapbox.com/android/maps/guides/install/>. In order to do this, you'll need to configure your credentials and add the Mapbox SDK as a dependency. Be sure to do everything in this page aside from the "Add a Map" step at the bottom. Make sure to add the MAPBOX_DOWNLOADS_TOKEN= parameter to the gradle.properties file. You will see the spot to do this in a few steps. Once this is complete, please add the api access token as a raw string to strings.xml.
+To complete this, follow the steps in the following link: <https://docs.mapbox.com/android/maps/guides/install/>. In order to do this, you'll need to configure your credentials and add the Mapbox SDK as a dependency. Be sure to do everything in this page aside from the "Add a Map" step at the bottom.
+The mapbox access token in the `strings.xml` file below is your account's `default public token` which can be found [here](https://account.mapbox.com/access-tokens/) if you are logged into Mapbox. Once the private token is created, please copy it to a safe place. You will need it in a few steps.
 
 Once this is complete, please add the api access token as a raw string to `strings.xml`.
 
@@ -312,7 +313,7 @@ task clean(type: Delete) {
 }
 ```
 #### gradle.properties
-Enable jetifier. Also add your mapbox token after the equal sign. (Don't put quotations around the token)
+Enable jetifier. **Add your mapbox private token from earlier after the equal sign of `MAPBOX_DOWNLOADS_TOKEN`. (Don't put quotations around the token)**
 ```kotlin
 android.enableJetifier=true
 MAPBOX_DOWNLOADS_TOKEN=
