@@ -1,4 +1,6 @@
-# Creating a MapView and Waypoint Application with MapBox
+# Creating a MapView and Waypoint Application with MapBox (Waypoints V1)
+**Important Note:**
+This tutorial is for DJI drones that support waypoints v1. If you are looking for the tutorial for flying a mavic mini with waypoints, please visit this [readme](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/MavicMiniMapREADME.md).
 
 ## DJI LAB 5 TUTORIAL KOTLIN
 
@@ -7,8 +9,6 @@
 In this tutorial, you will learn how to implement the DJIWaypoint Mission feature and get familiar with the usages of MissionControl.
 
 Also you will know how to test the Waypoint Mission API with DJI Assistant 2 Simulator too. So let's get started!
-
-You can download the tutorial's final sample project from this [Github Page](https://github.com/riisinterns/drone-lab-six-mapview-waypoint).
 
 > Note: In this tutorial, we will use Mavic Pro for testing, use Android Studio 3.0 for developing the demo application, and use the Mapbox API for navigating.
 
@@ -28,18 +28,18 @@ We can use the map view to display waypoints and show the flight route of the ai
 
 #### 1. Create the project
 
-Open Android Studio and select **File -> New -> New Project** to create a new project, named `"GSDemo-Kotlin"`. Enter the company domain and package name `(Here we use "com.riis.mapviewdemo")` you want and press Next. Set the mimimum SDK version as `API 22: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
+Open Android Studio and select **File -> New -> New Project** to create a new project, named `"MapViewDemo"`. Enter the company domain and package name `(Here we use "com.riis.mapviewdemo")` you want and press Next. Set the mimimum SDK version as `API 21: Android 5.1 (Lollipop)` for "Phone and Tablet" and press Next. Then select "Empty Activity" and press Next. Lastly, leave the Activity Name as "MainActivity", and the Layout Name as "activity_main", Press "Finish" to create the project.
 
 #### 2. Install the Mapbox SDK
 
-To complete this, follow the steps in the following link: <https://docs.mapbox.com/android/maps/guides/install/>. In order to do this, you'll need to configure your credentials and add the Mapbox SDK as a dependency. Be sure to do everything in this page aside from the "Add a Map" step at the bottom.
+To complete this, follow the steps in the following link: <https://docs.mapbox.com/android/maps/guides/install/>. In order to do this, you'll need to configure your credentials and add the Mapbox SDK as a dependency. Be sure to do everything in this page aside from the "Add a Map" step at the bottom. Make sure to add the MAPBOX_DOWNLOADS_TOKEN= parameter to the gradle.properties file. You will see the spot to do this in a few steps. Once this is complete, please add the api access token as a raw string to strings.xml.
 
 Once this is complete, please add the api access token as a raw string to `strings.xml`.
 
 ```xml
 
 <resources>
-    <string name="app_name">GSDemo-Kotlin</string>
+    <string name="app_name">Map View Demo</string>
     <string name="action_settings">Settings</string>
     <string name="disconnected">Disconnected</string>
     <string name="product_information">Product Information</string>
@@ -59,7 +59,7 @@ Specify the permissions of your application needs, by adding `<uses-permission>`
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.riis.mapviewwalkthrough">
+    package="com.riis.mapviewdemo">
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -132,85 +132,10 @@ Specify the permissions of your application needs, by adding `<uses-permission>`
 
 In order to use Mapbox Service in our project, we need to add Multidex support to avoid the 64K limit with Gradle.
 
-Modify the module-level `build.gradle` file configuration to include the support library and enable multidex output in both **defaultConfig** and **dependencies** parts, as shown in the following code snippet:
-
-```gradle
-android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
-
-    defaultConfig {
-        ...
-        minSdkVersion 22
-        targetSdkVersion 30
-        ...
-        
-        // Enabling multidex support.
-        multiDexEnabled true
-    }
-    ...
-}
-
-dependencies {
-  ...
-  implementation 'androidx.multidex:multidex:2.0.0'
-  implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
-}
-```
-
-In the code above, we declare the "compileSdkVersion", "buildToolsVersion", "minSdkVersion" and "targetSdkVersion". Furthermore, we add the compile `implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'` to the "dependencies" to support the mapbox service.
-
-Then select **Tools->Android->Sync Project** with Gradle Files to sync the gradle files.
-
-For more details about configuring your App for Multidex with Gradle, please check this link: <http://developer.android.com/tools/building/multidex.html>.
-
----
-
-### Importing the DJI Dependencies
-
-Please follow [Lab Two: Import and Activate SDK into Application](https://github.com/riisinterns/drone-lab-two-import-and-activate-sdk-in-android-studio) tutorial to learn how to import the Android SDK Maven Dependency for DJI. Please use the following gradle files.
-
-#### Build.gradle (Project)
-```kotlin
-buildscript {
-    ext.kotlin_version = "1.6.10"
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:4.1.3"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url 'https://api.mapbox.com/downloads/v2/releases/maven'
-            authentication {
-                basic(BasicAuthentication)
-            }
-            credentials {
-                username = 'mapbox'
-                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
-            }
-        }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-```
+Please use the following full `build.gradle (module)`
 
 #### Build.gradle (Module)
-```kotlin
+```gradle
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -225,7 +150,7 @@ android {
 
     defaultConfig {
         applicationId "com.riis.mapviewdemo"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -305,7 +230,7 @@ dependencies {
 
     //DJI Dependencies
     implementation 'androidx.multidex:multidex:2.0.0'
-    implementation ('com.dji:dji-sdk:4.16', {
+    implementation ('com.dji:dji-sdk:4.16.1', {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
@@ -313,7 +238,7 @@ dependencies {
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
-    compileOnly ('com.dji:dji-sdk-provided:4.16')
+    compileOnly ('com.dji:dji-sdk-provided:4.16.1')
 
     //Mapbox
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
@@ -336,38 +261,68 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 ```
-#### gradle.properties
+In the code above, we declare the "compileSdkVersion", "buildToolsVersion", "minSdkVersion" and "targetSdkVersion". Furthermore, we add the compile `implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'` to the "dependencies" to support the mapbox service.
+
+Then select **Tools->Android->Sync Project** with Gradle Files to sync the gradle files.
+
+For more details about configuring your App for Multidex with Gradle, please check this link: <http://developer.android.com/tools/building/multidex.html>.
+
+---
+
+### Other gradle files
+Please use the following files
+
+#### Build.gradle (Project)
+Replace everything in build.gradle with the following code.
 ```kotlin
-# Project-wide Gradle settings.
-# IDE (e.g. Android Studio) users:
-# Gradle settings configured through the IDE *will override*
-# any settings specified in this file.
-# For more details on how to configure your build environment visit
-# http://www.gradle.org/docs/current/userguide/build_environment.html
-# Specifies the JVM arguments used for the daemon process.
-# The setting is particularly useful for tweaking memory settings.
-org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-# When configured, Gradle will run in incubating parallel mode.
-# This option should only be used with decoupled projects. More details, visit
-# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
-# org.gradle.parallel=true
-# AndroidX package structure to make it clearer which packages are bundled with the
-# Android operating system, and which are packaged with your app"s APK
-# https://developer.android.com/topic/libraries/support-library/androidx-rn
-android.useAndroidX=true
-# Kotlin code style for this project: "official" or "obsolete":
-kotlin.code.style=official
-# Enables namespacing of each library's R class so that its R class includes only the
-# resources declared in the library itself and none from the library's dependencies,
-# thereby reducing the size of the R class for that library
-android.nonTransitiveRClass=true
+buildscript {
+    ext.kotlin_version = "1.6.10"
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.3"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                username = 'mapbox'
+                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+#### gradle.properties
+Enable jetifier. Also add your mapbox token after the equal sign. (Don't put quotations around the token)
+```kotlin
 android.enableJetifier=true
+MAPBOX_DOWNLOADS_TOKEN=
 ```
 
 #### Settings.gradle
+Replace everything in settings.gradle with the following code.
 ```kotlin
 include ':app'
-rootProject.name = "GSDemo-Kotlin"
+rootProject.name = "Mapview Demo"
 ```
 ---
 ### XML File Setup
@@ -399,6 +354,7 @@ Create `round_btn.xml` under `app/res/drawable`
     <item android:drawable="@drawable/round_btn_normal" ></item>
 </selector>
 ```
+
 Create `round_btn_disable.xml` under `app/res/drawable`
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -451,6 +407,7 @@ To improve the user experience, we had better create an activity to show the con
 
 #### MApplication
 ```kotlin
+package com.riis.mapviewdemo
 import android.app.Application
 import android.content.Context
 import com.secneo.sdk.Helper
@@ -464,12 +421,10 @@ class MApplication: Application() {
 }
 ```
 
-
-
-In order to create the `DJIDemoApplication.kt` singleton class, please add the following code to that file inside the com.riis.gsdemo_kotlin package:
+In order to create the `DJIDemoApplication.kt` singleton class, please add the following code to that file inside the com.riis.mapviewdemo package:
 
 ```kotlin
-package com.riis.gsdemo_kotlin
+package com.riis.mapviewdemo
 
 import dji.sdk.base.BaseProduct
 import dji.sdk.camera.Camera
@@ -525,9 +480,25 @@ object DJIDemoApplication {
 
 }
 ```
+The above class is a singleton that is used to store the DJI SDK related objects.
+
+* The `getProductInstance()` method is used to get the DJI Product instance.
+
+* The `getCameraInstance()` method is used to get the DJI Camera instance.
+
+* The `getFlightController()` method is used to get the DJI Flight Controller instance which is later used to tell the drone how to move.
+
+* The `isAircraftConnected()` method is used to check if the DJI Product is connected.
+
+* The `isProductModuleAvailable()` method is used to check if the DJI Product's modules can be accessed (ex. the camera).
+
+* The `isCameraModuleAvailable()` method is used to check if the DJI Product's camera module can be accessed and then it returns it.
+
+* The `isPlaybackAvailable()` method is used to check if the DJI Product's camera module has the playback manager and then it returns it.
 
 #### Connection Activity
 ```kotlin
+package com.riis.mapviewdemo
 import android.Manifest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -618,6 +589,7 @@ class ConnectionActivity : AppCompatActivity() {
 
 #### Connection View Model
 ```kotlin
+package com.riis.mapviewdemo
 import androidx.lifecycle.AndroidViewModel
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -681,23 +653,92 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 }
+
 ```
+#### activity_connection.xml
 
-This is a singleton class that is used to store the DJI SDK related objects.
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ConnectionActivity">
 
-* The `getProductInstance()` method is used to get the DJI Product instance.
+    <TextView
+        android:id="@+id/text_connection_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Status: No Product Connected"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/text_product_info"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="89dp" />
 
-* The `getCameraInstance()` method is used to get the DJI Camera instance.
+    <TextView
+        android:id="@+id/text_product_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="270dp"
+        android:text="@string/product_information"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        />
 
-* The `getFlightController()` method is used to get the DJI Flight Controller instance which is later used to tell the drone how to move.
+    <TextView
+        android:id="@+id/text_model_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="300dp"
+        android:text="@string/model_not_available"
+        android:textSize="15dp"/>
 
-* The `isAircraftConnected()` method is used to check if the DJI Product is connected.
+    <Button
+        android:id="@+id/btn_open"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="350dp"
+        android:background="@drawable/round_btn"
+        android:text="Open"
+        android:textColor="@color/colorWhite"
+        android:textSize="20dp"
+        />
 
-* The `isProductModuleAvailable()` method is used to check if the DJI Product's modules can be accessed (ex. the camera).
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="430dp"
+        android:text="@string/sdk_version"
+        android:textSize="15dp"
+        android:id="@+id/textView2" />
 
-* The `isCameraModuleAvailable()` method is used to check if the DJI Product's camera module can be accessed and then it returns it.
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:text="@string/app_name"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/black_overlay"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
-* The `isPlaybackAvailable()` method is used to check if the DJI Product's camera module has the playback manager and then it returns it.
+</RelativeLayout>
+```
 
 #### 2. Implementing MainActivity
 
@@ -724,22 +765,8 @@ Open the `activity_main.xml` layout file and replace the code with the following
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_waypoint2"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_waypoint2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/round_btn"
-        android:text="Waypoint 2.0"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_waypoint1" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -752,7 +779,7 @@ In the xml file, we implement the following UIs:
 
 * The second Button navigates to something similar except it uses Waypoint V2.0.
 
-Next, copy the `aircraft.png` and `ic_launcher.png` image files from this Github sample project to the drawable folders inside the res folder.
+Next, copy the [`aircraft.png`](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/res/drawable/aircraft.png) and [`ic_launcher.png`](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/res/drawable/ic_launcher.png) image files from this Github sample project to the drawable folders inside the res folder.
 
 Furthermore, open the `AndroidManifest.xml` file and ensure the following ".MainActivity" activity element exists within the application tag as shown below:
 
@@ -760,10 +787,10 @@ Furthermore, open the `AndroidManifest.xml` file and ensure the following ".Main
 <activity android:name=".MainActivity" />
 ```
 
-Finally, ensure that each of the buttons are setup so that you're able to navigate to `Waypoint1Activity.kt` and `Waypoint2Activity.kt` once they are pressed. Edit `MainActivity.kt` as follows:
+Finally, ensure that the button is setup so that you're able to navigate to `Waypoint1Activity.kt` once it is pressed. Edit `MainActivity.kt` as follows:
 
 ```kotlin
-package com.riis.gsdemo_kotlin
+package com.riis.mapviewdemo
 
 import android.content.Context
 import android.content.Intent
@@ -781,10 +808,6 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity,
                     Waypoint1Activity::class.java
                 )
-                R.id.btn_waypoint2 -> startActivity(
-                    this@MainActivity,
-                    Waypoint2Activity::class.java
-                )
             }
         }
 
@@ -793,7 +816,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.btn_waypoint1).setOnClickListener(clickListener) 
         // set the listener to the previously defined clickListener
-        findViewById<View>(R.id.btn_waypoint2).setOnClickListener(clickListener)
     }
 
     private fun startActivity(context: Context, activity: Class<*>?) { 
@@ -808,483 +830,8 @@ Here's a preview of what your main activity is supposed to look like:
 
 <img src="https://user-images.githubusercontent.com/33791954/154558715-200dc0b1-f8bb-483b-a07a-f40fae1d96a5.jpg" alt="drawing" width="200"/>
 
-#### 3. Mavic Mini Operator
-DJI mavic mini drones do not support automated waypoints. To get around this limitation, we will create our own automated waypoint system using DJI's virtual sticks. Virtual sticks allows us to send input to the drone as if the remote controller had sent them.
 
-Let's create the class `MavicMiniMissionOperator.kt`.
-```kotlin
-import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import com.riis.gsdemo_kotlin.DJIDemoApplication.getCameraInstance
-import dji.common.camera.SettingsDefinitions
-import dji.common.error.DJIError
-import dji.common.error.DJIMissionError
-import dji.common.flightcontroller.LocationCoordinate3D
-import dji.common.flightcontroller.virtualstick.*
-import dji.common.gimbal.Rotation
-import dji.common.gimbal.RotationMode
-import dji.common.mission.MissionState
-import dji.common.mission.waypoint.Waypoint
-import dji.common.mission.waypoint.WaypointMission
-import dji.common.mission.waypoint.WaypointMissionState
-import dji.common.model.LocationCoordinate2D
-import dji.common.util.CommonCallbacks
-import dji.sdk.camera.Camera
-import dji.sdk.mission.waypoint.WaypointMissionOperatorListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sqrt
-
-private const val TAG = "MMMissionOperator"
-
-class MavicMiniMissionOperator(context: Context) {
-
-    private var isLanding: Boolean = false
-    private var isLanded: Boolean = false
-    private var isAirborne: Boolean = false
-    private var photoIsSuccess: Boolean = false
-    private var observeGimbal: Boolean = false
-    private val activity: AppCompatActivity
-    private val mContext = context
-    private var gimbalObserver: Observer<Float>? = null
-
-    private var state: MissionState = WaypointMissionState.INITIAL_PHASE
-    private lateinit var mission: WaypointMission
-    private lateinit var waypoints: MutableList<Waypoint>
-    private lateinit var currentWaypoint: Waypoint
-
-    private var operatorListener: WaypointMissionOperatorListener? = null
-    var droneLocationMutableLiveData: MutableLiveData<LocationCoordinate3D> =
-        MutableLiveData()
-    val droneLocationLiveData: LiveData<LocationCoordinate3D> = droneLocationMutableLiveData
-
-    private var travelledLongitude = false
-    private var travelledLatitude = false
-    private var waypointTracker = 0
-
-    private var sendDataTimer =
-        Timer() //used to schedule tasks for future execution in a background thread
-    private lateinit var sendDataTask: SendDataTask
-
-    private var originalLongitudeDiff = -1.0
-    private var originalLatitudeDiff = -1.0
-    private var directions = Direction(altitude = 0f)
-
-    private var currentGimbalPitch: Float = 0f
-    private var gimbalPitchLiveData: MutableLiveData<Float> = MutableLiveData()
-
-    private var distanceToWaypoint = 0.0
-    private var photoTakenToggle = false
-
-
-    init {
-        initFlightController()
-        initGimbalListener()
-        activity = context as AppCompatActivity
-    }
-
-    private fun initFlightController() {
-        DJIDemoApplication.getFlightController()?.let { flightController ->
-            flightController.setVirtualStickModeEnabled(
-                true,
-                null
-            )//enables the aircraft to be controlled virtually
-
-            //setting the modes for controlling the drone's roll, pitch, and yaw
-            flightController.rollPitchControlMode = RollPitchControlMode.VELOCITY
-            flightController.yawControlMode = YawControlMode.ANGLE
-            flightController.verticalControlMode = VerticalControlMode.POSITION
-
-            //setting the drone's flight coordinate system
-            flightController.rollPitchCoordinateSystem = FlightCoordinateSystem.GROUND
-
-
-        }
-    }
-
-    private fun initGimbalListener() {
-        DJIDemoApplication.getGimbal()?.setStateCallback { gimbalState ->
-            currentGimbalPitch = gimbalState.attitudeInDegrees.pitch
-            gimbalPitchLiveData.postValue(currentGimbalPitch)
-        }
-    }
-
-    //Function for taking a a single photo using the DJI Product's camera
-    private fun takePhoto(): Boolean {
-        val camera: Camera = getCameraInstance() ?: return false
-
-        // Setting the camera capture mode to SINGLE, and then taking a photo using the camera.
-        // If the resulting callback for each operation returns an error that is null, then the two operations are successful.
-        val photoMode = SettingsDefinitions.ShootPhotoMode.SINGLE
-
-//        pauseMission()
-
-        camera.setShootPhotoMode(photoMode) { djiError ->
-            if (djiError == null) {
-                camera.startShootPhoto { djiErrorSecond ->
-                    if (djiErrorSecond == null) {
-                        Log.d(TAG, "take photo: success")
-                        showToast(mContext, "take photo: success")
-                        this.state = WaypointMissionState.EXECUTING
-                        this.photoIsSuccess = true
-                    } else {
-                        Log.d(TAG, "Take Photo Failure: ${djiError?.description}")
-                        this.state = WaypointMissionState.EXECUTION_PAUSED
-                        this.photoIsSuccess = false
-                    }
-                }
-            }
-        }
-        return this.photoIsSuccess
-    }
-
-
-    //Function used to set the current waypoint mission and waypoint list
-    fun loadMission(mission: WaypointMission?): DJIError? {
-        return if (mission == null) {
-            this.state = WaypointMissionState.NOT_READY
-            DJIMissionError.NULL_MISSION
-        } else {
-            this.mission = mission
-            this.waypoints = mission.waypointList
-            this.state = WaypointMissionState.READY_TO_UPLOAD
-            null
-        }
-    }
-
-    private fun pauseMission(){
-        if (this.state == WaypointMissionState.EXECUTING){
-            Log.d(TAG, "trying to pause")
-//            WaypointMissionOperator().pauseMission {
-//            }
-            this.state = WaypointMissionState.EXECUTION_PAUSED
-        }
-    }
-
-    //Function used to get the current waypoint mission ready to start
-    fun uploadMission(callback: CommonCallbacks.CompletionCallback<DJIMissionError>?) {
-        if (this.state == WaypointMissionState.READY_TO_UPLOAD) {
-            this.state = WaypointMissionState.READY_TO_START
-            callback?.onResult(null)
-        } else {
-            this.state = WaypointMissionState.NOT_READY
-            callback?.onResult(DJIMissionError.UPLOADING_WAYPOINT)
-        }
-    }
-
-    //Function used to make the drone takeoff and then begin execution of the current waypoint mission
-    fun startMission(callback: CommonCallbacks.CompletionCallback<DJIError>?) {
-        gimbalObserver = Observer {gimbalPitch: Float ->
-            if (gimbalPitch == -90f && !isAirborne) {
-                isAirborne = true
-                showToast(mContext, "Starting to Takeoff")
-                Log.d(TAG, "startMission: Start take off")
-                DJIDemoApplication.getFlightController()?.startTakeoff { error ->
-                    if (error == null) {
-                        callback?.onResult(null)
-                        this.state = WaypointMissionState.READY_TO_EXECUTE
-
-                        getCameraInstance()?.setMode(SettingsDefinitions.CameraMode.SHOOT_PHOTO) { error ->
-                            if (error == null) {
-                                showToast(mContext, "Switch Camera Mode Succeeded")
-                            } else {
-                                showToast(mContext, "Switch Camera Error: ${error.description}")
-                            }
-                        }
-
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed({
-                            executeMission()
-                        }, 8000)
-                    } else {
-                        callback?.onResult(error)
-                    }
-                }
-            }
-        }
-        if (this.state == WaypointMissionState.READY_TO_START) {
-            rotateGimbalDown()
-            gimbalObserver?.let {
-                gimbalPitchLiveData.observe(activity, it)
-            }
-        } else {
-            callback?.onResult(DJIMissionError.FAILED)
-        }
-    }
-
-    private fun rotateGimbalDown() {
-        val rotation = Rotation.Builder().mode(RotationMode.ABSOLUTE_ANGLE).pitch(-90f).build()
-        try {
-            val gimbal = DJIDemoApplication.getGimbal()
-
-            gimbal?.rotate(
-                rotation
-            ) { djiError ->
-                if (djiError == null) {
-                    Log.d(TAG, "rotate gimbal success")
-                    showToast(mContext, "rotate gimbal success")
-
-                } else {
-                    Log.d(TAG, "rotate gimbal error " + djiError.description)
-                    showToast(mContext, djiError.description)
-                }
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "Drone is likely not connected")
-        }
-    }
-
-    /*
- * Calculate the euclidean distance between two points.
- * Ignore curvature of the earth.
- *
- * @param a: The first point
- * @param b: The second point
- * @return: The square of the distance between a and b
- */
-    private fun distanceInMeters(a: LocationCoordinate2D, b: LocationCoordinate2D): Double {
-        return sqrt((a.longitude - b.longitude).pow(2.0) + (a.latitude - b.latitude).pow(2.0)) * 111139.0
-    }
-
-    //Function used to execute the current waypoint mission
-    private fun executeMission() {
-        state = WaypointMissionState.EXECUTION_STARTING
-        operatorListener?.onExecutionStart()
-        //running the execution in a coroutine to prevent blocking the main thread
-        activity.lifecycleScope.launch {
-            withContext(Dispatchers.Main) {
-                if (waypointTracker >= waypoints.size) return@withContext
-                currentWaypoint = waypoints[waypointTracker] //getting the current waypoint
-                droneLocationLiveData.observe(activity, locationObserver)
-            }
-        }
-    }
-
-    private val locationObserver = Observer { currentLocation: LocationCoordinate3D ->
-        //observing changes to the drone's location coordinates
-            state = WaypointMissionState.EXECUTING
-
-            distanceToWaypoint = distanceInMeters(
-                LocationCoordinate2D(
-                    currentWaypoint.coordinate.latitude,
-                    currentWaypoint.coordinate.longitude,
-
-                    ),
-                LocationCoordinate2D(
-                    currentLocation.latitude,
-                    currentLocation.longitude
-                )
-            )
-            if (!isLanded && !isLanding) {
-                //If the drone has arrived at the destination, take a photo.
-                if (!photoTakenToggle && (distanceToWaypoint < 1.5)) {//if you haven't taken a photo
-                    photoTakenToggle = takePhoto()
-                    Log.d(
-                        TAG,
-                        "attempting to take photo: $photoTakenToggle, $photoIsSuccess"
-                    )
-                } else if (photoTakenToggle && (distanceToWaypoint >= 1.5)) {
-                    photoTakenToggle = false
-                    photoIsSuccess = false
-                }
-            }
-
-            val longitudeDiff =
-                currentWaypoint.coordinate.longitude - currentLocation.longitude
-            val latitudeDiff =
-                currentWaypoint.coordinate.latitude - currentLocation.latitude
-
-            if (abs(latitudeDiff) > originalLatitudeDiff) {
-                originalLatitudeDiff = abs(latitudeDiff)
-            }
-
-            if (abs(longitudeDiff) > originalLongitudeDiff) {
-                originalLongitudeDiff = abs(longitudeDiff)
-            }
-
-            //terminating the sendDataTimer and creating a new one
-            sendDataTimer.cancel()
-            sendDataTimer = Timer()
-
-            if (!travelledLongitude) {//!travelledLongitude
-                val speed = kotlin.math.max(
-                    (mission.autoFlightSpeed * (abs(longitudeDiff) / (originalLongitudeDiff))).toFloat(),
-                    0.5f
-                )
-
-                directions.pitch = if (longitudeDiff > 0) speed else -speed
-
-            }
-
-            if (!travelledLatitude) {
-                val speed = kotlin.math.max(
-                    (mission.autoFlightSpeed * (abs(latitudeDiff) / (originalLatitudeDiff))).toFloat(),
-                    0.5f
-                )
-
-                directions.roll = if (latitudeDiff > 0) speed else -speed
-
-            }
-
-            //when the longitude difference becomes insignificant:
-            if (abs(longitudeDiff) < 0.000002) {
-                Log.i(TAG, "finished travelling LONGITUDE")
-                directions.pitch = 0f
-                travelledLongitude = true
-            }
-
-
-            if (abs(latitudeDiff) < 0.000002) {
-                Log.i(TAG, "finished travelling LATITUDE")
-                directions.roll = 0f
-                travelledLatitude = true
-            }
-
-            //when the latitude difference becomes insignificant and there
-            //... is no longitude difference (current waypoint has been reached):
-            if (travelledLatitude && travelledLongitude) {
-                //move to the next waypoint in the waypoints list
-                waypointTracker++
-                if (waypointTracker < waypoints.size) {
-                    currentWaypoint = waypoints[waypointTracker]
-                    originalLatitudeDiff = -1.0
-                    originalLongitudeDiff = -1.0
-                    travelledLongitude = false
-                    travelledLatitude = false
-                    directions = Direction()
-                } else { //If all waypoints have been reached, stop the mission
-                    state = WaypointMissionState.EXECUTION_STOPPING
-                    operatorListener?.onExecutionFinish(null)
-                    stopMission(null)
-                    isLanding = true
-                    sendDataTimer.cancel()
-                    if (isLanding && currentLocation.altitude == 0f) {
-                        if (!isLanded) {
-                            sendDataTimer.cancel()
-                            isLanded = true
-                        }
-
-                    }
-                    removeObserver()
-                }
-                sendDataTimer.cancel() //cancel all scheduled data tasks
-            } else {
-                // checking for pause state
-                if (state == WaypointMissionState.EXECUTING) {
-                    directions.altitude = currentWaypoint.altitude
-                } else if (state == WaypointMissionState.EXECUTION_PAUSED) {
-                    directions = Direction(0f, 0f, 0f, currentWaypoint.altitude)
-                }
-                move(directions)
-
-            }
-
-    }
-
-    private fun removeObserver() {
-        droneLocationLiveData.removeObserver(locationObserver)
-        gimbalObserver?.let {
-            gimbalPitchLiveData.removeObserver(it)
-        }
-        observeGimbal = false
-        isAirborne = false
-        waypointTracker = 0
-        isLanded = false
-        isLanding = false
-        travelledLatitude = false
-        travelledLongitude = false
-    }
-
-
-    @SuppressLint("LongLogTag")
-    //Function used to move the drone in the provided direction
-    private fun move(dir: Direction) {
-        Log.d(TAG, "PITCH: ${dir.pitch}, ROLL: ${dir.roll}, ALT: ${dir.altitude}")
-        sendDataTask =
-            SendDataTask(dir.pitch, dir.roll, dir.yaw, dir.altitude)
-        sendDataTimer.schedule(sendDataTask, 0, 200)
-    }
-
-//TODO
-// -   fun resumeMission() {
-// -
-// -   }
-// -
-// -   fun pauseMission() {
-// -
-// -   }
-
-    //Function used to stop the current waypoint mission and land the drone
-    fun stopMission(callback: CommonCallbacks.CompletionCallback<DJIMissionError>?) {
-        if (!isLanding) {
-            showToast(mContext, "trying to land")
-        }
-        DJIDemoApplication.getFlightController()?.setGoHomeHeightInMeters(30){
-            DJIDemoApplication.getFlightController()?.startGoHome(callback)
-        }
-    }
-
-    /*
-     * Roll: POSITIVE is SOUTH, NEGATIVE is NORTH, Range: [-30, 30]
-     * Pitch: POSITIVE is EAST, NEGATIVE is WEST, Range: [-30, 30]
-     * YAW: POSITIVE is RIGHT, NEGATIVE is LEFT, Range: [-360, 360]
-     * THROTTLE: UPWARDS MOVEMENT
-     */
-
-    fun addListener(listener: WaypointMissionOperatorListener) {
-        this.operatorListener = listener
-    }
-
-    fun removeListener() {
-        this.operatorListener = null
-    }
-
-    class SendDataTask(pitch: Float, roll: Float, yaw: Float, throttle: Float) : TimerTask() {
-        private val mPitch = pitch
-        private val mRoll = roll
-        private val mYaw = yaw
-        private val mThrottle = throttle
-        override fun run() {
-            DJIDemoApplication.getFlightController()?.sendVirtualStickFlightControlData(
-                FlightControlData(
-                    mPitch,
-                    mRoll,
-                    mYaw,
-                    mThrottle
-                ),
-                null
-            )
-            this.cancel()
-        }
-    }
-
-    inner class Direction(
-        var pitch: Float = 0f,
-        var roll: Float = 0f,
-        var yaw: Float = 0f,
-        var altitude: Float = currentWaypoint.altitude
-    )
-
-    private fun showToast(context: Context, message: String){
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-}
-```
-
-#### 4. Creating Waypoint1Activity
+#### 3. Creating Waypoint1Activity
 
 This activity is what is launched after clicking its associated button in the MainActivity. It's a simple activity that uses the DJI's Waypoint V1.0 functionality.
 
@@ -1308,7 +855,7 @@ First, let's begin with its autgenerated layout file. Please edit `activity_wayp
             android:id="@+id/ConnectStatusTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GSDemo"
+            android:text="Map View Demo"
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="21sp"
@@ -1379,7 +926,7 @@ First, let's begin with its autgenerated layout file. Please edit `activity_wayp
 
 In the xml file, we implement the following UIs:
 
-* Create a LinearLayout to show a TextView with "GSDemo" title and put it on the top.
+* Create a LinearLayout to show a TextView with "Map View Demo" title and put it on the top.
 
 * Create two lines of Buttons: "LOCATE", "ADD", "CLEAR", "CONFIG", "UPLOAD", "START" and "STOP", place them horizontally.
 
@@ -1395,7 +942,188 @@ Now, if you check the `activity_waypoint1.xml` file, you should see something si
 
 <img src="./images/initial-waypoint1-screen.png" alt="drawing" width="200"/>
 
-For the configuration dialogue layout let's create a new xml file named `dialog_waypointsetting.xml` in the layout folder by right-clicking on the "layout" folder and selecting **New->XML->Layout XML** File. Then replace the code with the [same file](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/res/layout/dialog_waypointsetting.xml) as the Github Demo Project. Since the content is too much, it won't be shown here.
+For the configuration dialogue layout let's create a new xml file named `dialog_waypointsetting.xml` in the layout folder by right-clicking on the "layout" folder and selecting **New->XML->Layout XML** File. Then replace the code with the [same file](https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/5-MapView/app/src/main/res/layout/dialog_waypointsetting.xml) as the Github Demo Project, also found below.
+
+`dialog_waypointsetting.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Waypoint Configuration"
+        android:layout_gravity="center_horizontal">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Altitude:">
+        </TextView>
+        <EditText
+            android:id="@+id/altitude"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content">
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Speed:">
+        </TextView>
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/speed"
+            android:layout_gravity="center_horizontal">
+            <RadioButton
+                android:id="@+id/lowSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Low"/>
+            <RadioButton
+                android:id="@+id/MidSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mid"/>
+            <RadioButton
+                android:id="@+id/HighSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="High"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Action After Finished:"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/actionAfterFinished"
+            android:layout_gravity="center_horizontal">
+            <RadioButton
+                android:id="@+id/finishNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="None"/>
+            <RadioButton
+                android:id="@+id/finishGoHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="GoHome"/>
+            <RadioButton
+                android:id="@+id/finishAutoLanding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="AutoLand"/>
+            <RadioButton
+                android:id="@+id/finishToFirst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="BackTo 1st"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Heading:"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/heading"
+            android:layout_gravity="center_horizontal">
+            <RadioButton
+                android:id="@+id/headingNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="Auto"/>
+            <RadioButton
+                android:id="@+id/headingInitDirec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="Initial"/>
+            <RadioButton
+                android:id="@+id/headingRC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="RC Control"/>
+            <RadioButton
+                android:id="@+id/headingWP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="5pt"
+                android:text="Use Waypoint"/>
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>
+
+```
 
 This xml file will help to setup a textView to enter "Altitude" and create three RadioButton Groups for selecting **Speed**, **Action After Finished** and **Heading**.
 
@@ -1408,82 +1136,142 @@ Now, if you check the `dialog_waypointsetting.xml` file, yyou should see somethi
 
 ### Implementing the Waypoint Activity
 
-> NOTE: This section is a more in depth version of the previous section.
+Full Waypoint Activity (`Waypoint1Activity.kt`)
 
-#### 1. Locating Aircraft on Mapbox Map
-
-Before we implementing the waypoint mission feature, we should show the aircraft's location on the Mapbox Map and try to zoom in automatically to view the surrounding area of the aircraft.
-
-Let's open `Wapoint1Activity.kt` file
-
-Extend `Waypoint1Activity` with `AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener` as shown below
 ```kotlin
-class Waypoint1Activity: AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener{
-    ...
-}
-```
+package com.riis.mapviewdemo
 
-Declare the following variables first:
-```kotlin
-private lateinit var locate: Button
-private lateinit var add: Button
-private lateinit var clear: Button
-private lateinit var config: Button
-private lateinit var upload: Button
-private lateinit var start: Button
-private lateinit var stop: Button
+import android.app.AlertDialog
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.Marker
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.maps.SupportMapFragment
+import dji.common.error.DJIError
+import dji.common.mission.waypoint.*
+import dji.sdk.mission.waypoint.WaypointMissionOperator
+import dji.sdk.mission.waypoint.WaypointMissionOperatorListener
+import dji.sdk.sdkmanager.DJISDKManager
+import java.util.concurrent.ConcurrentHashMap
 
-private var droneLocationLat: Double = 15.0
-private var droneLocationLng: Double = 15.0
-private var droneMarker: Marker? = null
-private var isAdd = false
-private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
-private var mapboxMap: MapboxMap? = null
-private var mavicMiniMissionOperator: MavicMiniMissionOperator? = null
-```
 
-Then, `override onMapReady()` functon and add the following code. The map is initialized here, the click listener is set, and the style is set.
-```kotlin
- override fun onMapReady(mapboxMap: MapboxMap) {
+class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener {
+
+    private lateinit var locate: Button
+    private lateinit var add: Button
+    private lateinit var clear: Button
+    private lateinit var config: Button
+    private lateinit var upload: Button
+    private lateinit var start: Button
+    private lateinit var stop: Button
+
+    companion object {
+        const val TAG = "Waypoint1Activity"
+        private var waypointMissionBuilder: WaypointMission.Builder? = null // you will use this to add your waypoints
+
+        fun checkGpsCoordination(latitude: Double, longitude: Double): Boolean { // this will check if your gps coordinates are valid
+            return latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180 && latitude != 0.0 && longitude != 0.0
+        }
+    }
+
+    private var isAdd = false
+    private var droneLocationLat: Double = 15.0
+    private var droneLocationLng: Double = 15.0
+    private var droneMarker: Marker? = null
+    private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
+    private var mapboxMap: MapboxMap? = null
+
+    private var altitude = 100f
+    private var speed = 10f
+
+    private val waypointList = mutableListOf<Waypoint>()
+    private var instance: WaypointMissionOperator? = null
+    private var finishedAction = WaypointMissionFinishedAction.NO_ACTION
+    private var headingMode = WaypointMissionHeadingMode.AUTO
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token)) // this will get your mapbox instance using your access token
+        setContentView(R.layout.activity_waypoint1) // use the waypoint1 activity layout
+
+        initUi() // initialize the UI
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.onCreate(savedInstanceState)
+        mapFragment.getMapAsync(this)
+
+        addListener() // will add a listener to the waypoint mission operator
+    }
+
+    override fun onMapReady(mapboxMap: MapboxMap) {
         this.mapboxMap = mapboxMap // initialize the map
         mapboxMap.addOnMapClickListener(this)
         mapboxMap.setStyle(Style.MAPBOX_STREETS) { // set the view of the map
+
         }
     }
-```
 
-Then, `override onCreate()` initializes the map instance with the access token while also adding it to the fragment view in the layout. It also initializes the UI (`initUI()`) and adds the waypoint mission operator listeners (`addListener()`).
+    override fun onMapClick(point: LatLng): Boolean {
+        if (isAdd) { // if the user is adding waypoints
+            markWaypoint(point) // this will mark the waypoint visually
+            val waypoint = Waypoint(point.latitude, point.longitude, point.altitude.toFloat()) // this will create the waypoint object to be added to the mission
 
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    Mapbox.getInstance(this, getString(R.string.mapbox_access_token)) 
-    // this will get your mapbox instance using your access token
-    setContentView(R.layout.activity_waypoint1) // use the waypoint1 activity layout
+            if (waypointMissionBuilder == null){
+                waypointMissionBuilder = WaypointMission.Builder().also { builder ->
+                    waypointList.add(waypoint) // add the waypoint to the list
+                    builder.waypointList(waypointList).waypointCount(waypointList.size)
+                }
+            } else {
+                waypointMissionBuilder?.let { builder ->
+                    waypointList.add(waypoint)
+                    builder.waypointList(waypointList).waypointCount(waypointList.size)
+                }
+            }
+        } else {
+            setResultToToast("Cannot Add Waypoint")
+        }
+        return true
+    }
 
-    initUi() // initialize the UI
+    private fun markWaypoint(point: LatLng) {
+        val markerOptions = MarkerOptions()
+                .position(point)
+        mapboxMap?.let {
+            val marker = it.addMarker(markerOptions)
+            markers.put(markers.size, marker)
+        }
+    }
 
-    val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-    mapFragment.onCreate(savedInstanceState)
-    mapFragment.getMapAsync(this)
+    override fun onResume() {
+        super.onResume()
+        initFlightController()
+    }
 
-    addListener() // will add a listener to the waypoint mission operator
-}
+    override fun onDestroy() {
+        super.onDestroy()
+        removeListener()
+    }
 
-override fun onResume() {
-    super.onResume()
-    initFlightController()
-}
+    private fun addListener() {
+        getWaypointMissionOperator()?.addListener(eventNotificationListener)
+    }
 
-override fun onDestroy() {
-    super.onDestroy()
-    removeListener()
-}
-```
+    private fun removeListener() {
+        getWaypointMissionOperator()?.removeListener(eventNotificationListener)
+    }
 
-Create the `initUI()` function and add the following code
-```kotlin
-private fun initUi() {
+    private fun initUi() {
         locate = findViewById(R.id.locate)
         add = findViewById(R.id.add)
         clear = findViewById(R.id.clear)
@@ -1500,529 +1288,178 @@ private fun initUi() {
         start.setOnClickListener(this)
         stop.setOnClickListener(this)
     }
-```
 
-The `updateDroneLocation()` method is used to update the drone's location on the map.
+   
+    private fun initFlightController() {
+        // this will initialize the flight controller with predetermined data
+        DJIDemoApplication.getFlightController()?.let { flightController ->
+            flightController.setStateCallback { flightControllerState ->
+                // set the latitude and longitude of the drone based on aircraft location
+                droneLocationLat = flightControllerState.aircraftLocation.latitude
+                droneLocationLng = flightControllerState.aircraftLocation.longitude
+                runOnUiThread {
+                    updateDroneLocation() // this will be called on the main thread
+                }
+            }
 
-```kotlin
-private fun updateDroneLocation() { // this will draw the aircraft as it moves
-    //Log.i(TAG, "Drone Lat: $droneLocationLat - Drone Lng: $droneLocationLng")
-    if (droneLocationLat.isNaN() || droneLocationLng.isNaN())  { return }
-
-    val pos = LatLng(droneLocationLat, droneLocationLng)
-    // the following will draw the aircraft on the screen
-    val markerOptions = MarkerOptions()
-            .position(pos)
-            .icon(IconFactory.getInstance(this).fromResource(R.drawable.aircraft))
-    runOnUiThread {
-        droneMarker?.remove()
-        if (checkGpsCoordination(droneLocationLat, droneLocationLng)) {
-            droneMarker = mapboxMap?.addMarker(markerOptions)
         }
     }
-}
-```
 
-Next, let's implement the `initFlightController()` method which initilizes the flight controller with the aircraft's location and also invokes `updateDroneLocation()` in its state callback:
+    private fun updateDroneLocation() { // this will draw the aircraft as it moves
+        //Log.i(TAG, "Drone Lat: $droneLocationLat - Drone Lng: $droneLocationLng")
+        if (droneLocationLat.isNaN() || droneLocationLng.isNaN())  { return }
 
-```kotlin
-private fun initFlightController() { 
-    // this will initialize the flight controller with predetermined data
-    DJIDemoApplication.getFlightController()?.let { flightController ->
-        flightController.setStateCallback { flightControllerState ->
-            // set the latitude and longitude of the drone based on aircraft location
-            droneLocationLat = flightControllerState.aircraftLocation.latitude
-            droneLocationLng = flightControllerState.aircraftLocation.longitude
-            runOnUiThread {
-                mavicMiniMissionOperator?.droneLocationMutableLiveData?.postValue(flightControllerState.aircraftLocation)
-                updateDroneLocation() // this will be called on the main thread
+        val pos = LatLng(droneLocationLat, droneLocationLng)
+        // the following will draw the aircraft on the screen
+        val markerOptions = MarkerOptions()
+                .position(pos)
+                .icon(IconFactory.getInstance(this).fromResource(R.drawable.aircraft))
+        runOnUiThread {
+            droneMarker?.remove()
+            if (checkGpsCoordination(droneLocationLat, droneLocationLng)) {
+                droneMarker = mapboxMap?.addMarker(markerOptions)
             }
         }
     }
-}
-```
 
-`updateDroneLocation()` is also invoked in the `override onClick()` method for the "Locate" button. Similarly, `cameraUpdate()` updates the map camera to follow the drone. This is also called alongside the method above it.
-
-```kotlin
-override fun onClick(v: View?) {
-    when (v?.id) {
-        R.id.locate -> { 
-            // will draw the drone and move camera 
-            // to the position of the drone on the map
-            updateDroneLocation()
-            cameraUpdate()
-        }
-        ...
-    }
-}
-```
-
-Below is the implementation of mentioned the `cameraUpdate()` method:
-
-```kotlin
-private fun cameraUpdate() { // update where you're looking on the map
-    if (droneLocationLat.isNaN() || droneLocationLng.isNaN())  { return }
-    val pos = LatLng(droneLocationLat, droneLocationLng)
-    val zoomLevel = 18.0
-    val cameraUpdate = CameraUpdateFactory.newLatLngZoom(pos, zoomLevel)
-    mapboxMap?.moveCamera(cameraUpdate)
-}
-```
-
-#### 2. Adding Waypoint Markers
-
-Since you can see the drone clearly on the Mapbox now, you can add Markers on the map to show the waypoints of the Waypoint Mission. Let's continue to declare the `markers` variable first:
-
-```kotlin
-private var isAdd = false
-private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
-```
-
-Then, implement the `override onMapClick()` and `markWaypoint()` methods as shown below:
-
-```kotlin
-private fun setResultToToast(string: String) {
-    runOnUiThread { Toast.makeText(this, string, Toast.LENGTH_SHORT).show() }
-}
-
-override fun onMapClick(point: LatLng): Boolean {
-    if (isAdd) { // if the user is adding waypoints
-        markWaypoint(point) // this will mark the waypoint visually
-        val waypoint = Waypoint(point.latitude, point.longitude, point.altitude.toFloat()) // this will create the waypoint object to be added to the mission
-
-        if (waypointMissionBuilder == null){
-            waypointMissionBuilder = WaypointMission.Builder().also { builder ->
-                waypointList.add(waypoint) // add the waypoint to the list
-                builder.waypointList(waypointList).waypointCount(waypointList.size)
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.locate -> { // will draw the drone and move camera to the position of the drone on the map
+                updateDroneLocation()
+                cameraUpdate()
             }
-        } else {
-            waypointMissionBuilder?.let { builder ->
-                waypointList.add(waypoint)
-                builder.waypointList(waypointList).waypointCount(waypointList.size)
+            R.id.add -> { // this will toggle the adding of the waypoints
+                enableDisableAdd()
             }
-        }
-    } else {
-        setResultToToast("Cannot Add Waypoint")
-    }
-    return true
-}
-
-private fun markWaypoint(point: LatLng) {
-    val markerOptions = MarkerOptions()
-            .position(point)
-    mapboxMap?.let {
-        val marker = it.addMarker(markerOptions)
-        markers.put(markers.size, marker)
-    }
-}
-```
-
-Here, the `override onMapClick()` method will be invoked when user tap on the Map View. When user tap on different position of the Map View, we will create a `MarkerOptions` object and assign the "LatLng" object to it, then invoke mapboxMap's `addMarker()` method by passing the `markerOptions` parameter to add the waypoint markers on the map.
-
-Finally, let's implement the `override onClick()` and `enableDisableAdd()` methods to implement the **ADD** and **CLEAR** actions as shown below:
-
-```kotlin
-override fun onClick(v: View?) {
-    when (v?.id) {
-        R.id.locate -> { 
-            // will draw the drone and move camera
-            // to the position of the drone on the map
-            updateDroneLocation()
-            cameraUpdate()
-        }
-        R.id.add -> { // this will toggle the adding of the waypoints
-            enableDisableAdd()
-        }
-        R.id.clear -> { // clear the waypoints on the map
-            runOnUiThread {
-                mapboxMap?.clear()
+            R.id.clear -> { // clear the waypoints on the map
+                runOnUiThread {
+                    mapboxMap?.clear()
+                }
+                clearWaypoints()
             }
-            clearWaypoints()
+            R.id.config -> { // this will show the settings
+                showSettingsDialog()
+            }
+            R.id.upload -> { // this will upload the mission to the drone so that it can execute it
+                uploadWaypointMission()
+            }
+            R.id.start -> { // this will let the drone start navigating to the waypoints
+                startWaypointMission()
+            }
+            R.id.stop -> { // this will immediately stop the waypoint mission
+                stopWaypointMission()
+            } else -> {}
         }
-        ...
     }
-}
-
-private fun clearWaypoints(){
+    
+    private fun clearWaypoints(){
         waypointMissionBuilder?.waypointList?.clear()
-}
-
-private fun enableDisableAdd() { // toggle for adding or not
-    if (!isAdd) {
-        isAdd = true
-        add.text = "Exit"
-    } else {
-        isAdd = false
-        add.text = "Add"
     }
-}
-```
 
-#### 3. Configurating the Waypoint Mission
-
-Before we upload a Waypoint Mission, we should provide a way for user to configure it, like setting the flying altitude, speed, heading, etc. So let's declare several variables as shown below firstly:
-
-```kotlin
-companion object {
-    const val TAG = "GSDemoActivity"
-
-    private var waypointMissionBuilder: WaypointMission.Builder? = null 
-    // you will use this to add your waypoints
-
-    fun checkGpsCoordination(latitude: Double, longitude: Double): Boolean { 
-        // this will check if your gps coordinates are valid
-        return latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180 && latitude != 0.0 && longitude != 0.0
+    private fun startWaypointMission() { // start mission
+        getWaypointMissionOperator()?.startMission { error ->
+            setResultToToast("Mission Start: " + if (error == null) "Successfully" else error.description)
+        }
     }
-}
 
-private var altitude = 100f
-private var speed = 10f
+    private fun stopWaypointMission() { // stop mission
+        getWaypointMissionOperator()?.stopMission { error ->
+            setResultToToast("Mission Stop: " + if (error == null) "Successfully" else error.description)
+        }
+    }
 
-private val waypointList = mutableListOf<Waypoint>()
-private var instance: WaypointMissionOperator? = null
-private var finishedAction = WaypointMissionFinishedAction.NO_ACTION
-private var headingMode = WaypointMissionHeadingMode.AUTO
-```
-
-Here we declare the `altitude`, `speed`, `finishedAction` and `headingMode` variables and intialize them with a default value. We create a companion object for this activity which contains a `waypointMissionBuilder` variable and a `checkGPSCoordination()` method which checks the validity of the GPS coordinates. Finally we make an `instance` variable of type WaypointMissionOperator for setting up missions.
-
-Next, replace the code of `showSettingDialog()` method with the following:
-
-```kotlin
-private fun showSettingsDialog() {
-    val wayPointSettings = layoutInflater.inflate(R.layout.dialog_waypointsetting, null) as LinearLayout
-
-    val wpAltitudeTV = wayPointSettings.findViewById<View>(R.id.altitude) as TextView
-    val speedRG = wayPointSettings.findViewById<View>(R.id.speed) as RadioGroup
-    val actionAfterFinishedRG = wayPointSettings.findViewById<View>(R.id.actionAfterFinished) as RadioGroup
-    val headingRG = wayPointSettings.findViewById<View>(R.id.heading) as RadioGroup
-
-    speedRG.setOnCheckedChangeListener { _, checkedId -> // set the speed to the selected option
-        Log.d(TAG, "Select speed")
-        when (checkedId) {
-            R.id.lowSpeed -> {
-                speed = 3.0f
-            }
-            R.id.MidSpeed -> {
-                speed = 5.0f
-            }
-            R.id.HighSpeed -> {
-                speed = 10.0f
+    private fun uploadWaypointMission() { // upload the mission
+        getWaypointMissionOperator()!!.uploadMission { error ->
+            if (error == null) {
+                setResultToToast("Mission upload successfully!")
+            } else {
+                setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
+                //uncomment for DJI waypoint mission manager
+                getWaypointMissionOperator()?.retryUploadMission(null)
             }
         }
     }
 
-    actionAfterFinishedRG.setOnCheckedChangeListener { _, checkedId -> // set the action after finishing the mission
-        Log.d(TAG, "Select finish action")
+    private fun showSettingsDialog() {
+        val wayPointSettings = layoutInflater.inflate(R.layout.dialog_waypointsetting, null) as LinearLayout
 
-        when (checkedId) {
-            R.id.finishNone -> {
-                finishedAction = WaypointMissionFinishedAction.NO_ACTION
-            }
-            R.id.finishGoHome -> {
-                finishedAction = WaypointMissionFinishedAction.GO_HOME
-            }
-            R.id.finishAutoLanding -> {
-                finishedAction = WaypointMissionFinishedAction.AUTO_LAND
-            }
-            R.id.finishToFirst -> {
-                finishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT
-            }
-        }
-    }
+        val wpAltitudeTV = wayPointSettings.findViewById<View>(R.id.altitude) as TextView
+        val speedRG = wayPointSettings.findViewById<View>(R.id.speed) as RadioGroup
+        val actionAfterFinishedRG = wayPointSettings.findViewById<View>(R.id.actionAfterFinished) as RadioGroup
+        val headingRG = wayPointSettings.findViewById<View>(R.id.heading) as RadioGroup
 
-    headingRG.setOnCheckedChangeListener { _, checkedId -> // changes the heading
-
-        Log.d(TAG, "Select heading")
-        when (checkedId) {
-            R.id.headingNext -> {
-                headingMode = WaypointMissionHeadingMode.AUTO
-            }
-            R.id.headingInitDirec -> {
-                headingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION
-            }
-            R.id.headingRC -> {
-                headingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER
-            }
-            R.id.headingWP -> {
-                headingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING
-            }
-
-        }
-    }
-
-    AlertDialog.Builder(this) // creates the dialog
-            .setTitle("")
-            .setView(wayPointSettings)
-            .setPositiveButton("Finish") { dialog, id ->
-                val altitudeString = wpAltitudeTV.text.toString()
-                altitude = nullToIntegerDefault(altitudeString).toInt().toFloat()
-                Log.e(TAG, "altitude $altitude")
-                Log.e(TAG, "speed $speed")
-                Log.e(TAG, "mFinishedAction $finishedAction")
-                Log.e(TAG, "mHeadingMode $headingMode")
-                configWayPointMission()
-            }
-            .setNegativeButton("Cancel") { dialog, id -> dialog.cancel() }
-            .create()
-            .show()
-}
-
-private fun nullToIntegerDefault(value: String): String {
-    var newValue = value
-    if (!isIntValue(newValue)) newValue = "0"
-    return newValue
-}
-
-private fun isIntValue(value: String): Boolean {
-    try {
-        var newValue = value.replace(" ", "")
-        newValue.toInt()
-    } catch (e: Exception) {
-        return false
-    }
-    return true
-}
-```
-
-Here, we implement the `setOnCheckedChangeListener()` method of "RadioGroup" class and pass different values to the `speed`, `finishedAction` and `headingMode` variables based on the item the user selects.
-
-For the finished action of DJIWaypointMission, we provide several enum values here:
-
-* **AUTO_LAND**: The aircraft will automatically land at the last waypoint.
-
-* **CONTINUE_UNTIL_END**: If the user attempts to pull the aircraft back along the flight path as the mission is being executed, the aircarft will move towards the previous waypoint and will continue to do so until there are no more waypoint to move back to or the user has stopped attempting to move the aircraft back.
-
-* **GO_FIRST_WAYPOINT**: The aircraft will go back to its first waypoint and hover in position.
-
-* **GO_HOME**: The aicraft will go home when the mission is complete.
-
-* **NO_ACTION**: No further action will be taken on completion of mission.
-
-For the heading mode of DJIWaypointMission, we provide these enum values here:
-
-* **AUTO**: Aircraft's heading will always be in the direction of flight.
-
-* **CONTROL_BY_REMOTE_CONTROLLER**: Aircraft's heading will be controlled by the remote controller.
-
-* **TOWARD_POINT_OF_INTEREST**: Aircraft's heading will always toward point of interest.
-
-* **USING_INITIAL_DIRECTION**: Aircraft's heading will be set to the initial take-off heading.
-
-* **USING_WAYPOINT_HEADING**: Aircraft's heading will be set to the previous waypoint's heading while travelling between waypoints.
-
-Now, let's continue to implement the `getWaypointMissionOperator()` and `configWayPointMission()` methods as shown below:
-
-```kotlin
-private fun getWaypointMissionOperator(): MavicMiniMissionOperator? { // returns the mission operator
-    if(mavicMiniMissionOperator == null){
-            mavicMiniMissionOperator = MavicMiniMissionOperator(this)
-        }
-        return mavicMiniMissionOperator
-}
-
-private fun configWayPointMission() {
-    if (waypointMissionBuilder == null) {
-            waypointMissionBuilder = WaypointMission.Builder().apply {
-                finishedAction(finishedAction) // initialize the mission builder if null
-                headingMode(headingMode)
-                autoFlightSpeed(speed)
-                maxFlightSpeed(speed)
-                flightPathMode(WaypointMissionFlightPathMode.NORMAL)
-                gotoFirstWaypointMode(WaypointMissionGotoWaypointMode.SAFELY)
-                isGimbalPitchRotationEnabled = true
-            }
-        }
-
-    waypointMissionBuilder?.let { builder ->
-            builder.apply {
-                finishedAction(finishedAction)
-                headingMode(headingMode)
-                autoFlightSpeed(speed)
-                maxFlightSpeed(speed)
-                flightPathMode(WaypointMissionFlightPathMode.NORMAL)
-                gotoFirstWaypointMode(WaypointMissionGotoWaypointMode.SAFELY)
-                isGimbalPitchRotationEnabled = true
-            }
-
-            if (builder.waypointList.size > 0) {
-                for (i in builder.waypointList.indices) { // set the altitude of all waypoints to the user defined altitude
-                    builder.waypointList[i].altitude = altitude
-                    builder.waypointList[i].heading = 0
-                    builder.waypointList[i].actionRepeatTimes = 1
-                    builder.waypointList[i].actionTimeoutInSeconds = 30
-                    builder.waypointList[i].turnMode = WaypointTurnMode.CLOCKWISE
-                    builder.waypointList[i].addAction(WaypointAction(WaypointActionType.GIMBAL_PITCH, -90))
-                    builder.waypointList[i].addAction(WaypointAction(WaypointActionType.START_TAKE_PHOTO, 0))
-                    builder.waypointList[i].shootPhotoDistanceInterval = 28.956f
+        speedRG.setOnCheckedChangeListener { _, checkedId -> // set the speed to the selected option
+            Log.d(TAG, "Select speed")
+            when (checkedId) {
+                R.id.lowSpeed -> {
+                    speed = 3.0f
                 }
-                setResultToToast("Set Waypoint attitude successfully")
-            }
-            getWaypointMissionOperator()?.let { operator ->
-                val error = operator.loadMission(builder.build()) // load the mission
-                if (error == null) {
-                    setResultToToast("loadWaypoint succeeded")
-                } else {
-                    setResultToToast("loadWaypoint failed " + error.description)
+                R.id.MidSpeed -> {
+                    speed = 5.0f
+                }
+                R.id.HighSpeed -> {
+                    speed = 10.0f
                 }
             }
         }
-}
-```
 
-In the code above, we firstly get the `MavicMiniMissionOperator` instance in the `getWaypointMissionOperator()` method, then in the `configWayPointMission()` method, we check if `waypointMissionBuilder` is null and set its `finishedAction`, `headingMode`, `autoFlightSpeed`, `maxFlightSpeed` and `flightPathMode` variables of **WaypointMission.Builder**. Then we use a for loop to set each DJIWaypoint's altitude in the `waypointMissionBuilder`'s waypointsList. Next, we invoke the `loadMission()` method of WaypointMissionOperator and pass the `waypointMissionBuilder.build()` as its parameter to load the waypoint mission to the operator.
+        actionAfterFinishedRG.setOnCheckedChangeListener { _, checkedId -> // set the action after finishing the mission
+            Log.d(TAG, "Select finish action")
 
-#### 4. Upload Waypoint Mission
-
-Now, let's create the following methods to setup `WaypointMissionOperatorListener`:
-
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    ...
-    addListener() // will add a listener to the waypoint mission operator
-}
-
-override fun onDestroy() {
-    super.onDestroy()
-    removeListener()
-}
-
-//Add Listener for WaypointMissionOperator
-private fun addListener() {
-        getWaypointMissionOperator()?.addListener(eventNotificationListener)
-    }
-
-private fun removeListener() {
-    getWaypointMissionOperator()?.removeListener()
-}
-
-private val eventNotificationListener: WaypointMissionOperatorListener = object : WaypointMissionOperatorListener {
-    override fun onDownloadUpdate(downloadEvent: WaypointMissionDownloadEvent) {}
-    override fun onUploadUpdate(uploadEvent: WaypointMissionUploadEvent) {}
-    override fun onExecutionUpdate(executionEvent: WaypointMissionExecutionEvent) {}
-    override fun onExecutionStart() {}
-    override fun onExecutionFinish(error: DJIError?) {
-        setResultToToast("Execution finished: " + if (error == null) "Success!" else error.description)
-    }
-}
-```
-
-In the code above, we invoke the `addListener()` and `removeListener()` methods of WaypointMissionOperator to add and remove the `WaypointMissionOperatorListener` and then invoke the `addListener()` method at the bottom of the `override onCreate()` method and invoke the `removeListener()` method in the `onDestroy()` method.
-
-Next, initialize the `WaypointMissionOperatorListener` instance and implement its `onExecutionFinish()` method to show a message to inform user when the mission execution finished.
-
-Furthermore, let's set waypointList of **WaypointMission.Builder** when user tap on the map to add a waypoint in the `override onMapClick()` method and implement the `uploadWayPointMission()` method to upload mission to the operator as shown below:
-
-```kotlin
-override fun onMapClick(point: LatLng): Boolean {
-    if (isAdd) { // if the user is adding waypoints
-        markWaypoint(point) // this will mark the waypoint visually
-        val waypoint = Waypoint(point.latitude, point.longitude, point.altitude.toFloat()) // this will create the waypoint object to be added to the mission
-
-        if (waypointMissionBuilder == null){
-            waypointMissionBuilder = WaypointMission.Builder().also { builder ->
-                waypointList.add(waypoint) // add the waypoint to the list
-                builder.waypointList(waypointList).waypointCount(waypointList.size)
-            }
-        } else {
-            waypointMissionBuilder?.let { builder ->
-                waypointList.add(waypoint)
-                builder.waypointList(waypointList).waypointCount(waypointList.size)
+            when (checkedId) {
+                R.id.finishNone -> {
+                    finishedAction = WaypointMissionFinishedAction.NO_ACTION
+                }
+                R.id.finishGoHome -> {
+                    finishedAction = WaypointMissionFinishedAction.GO_HOME
+                }
+                R.id.finishAutoLanding -> {
+                    finishedAction = WaypointMissionFinishedAction.AUTO_LAND
+                }
+                R.id.finishToFirst -> {
+                    finishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT
+                }
             }
         }
-    } else {
-        setResultToToast("Cannot Add Waypoint")
-    }
-    return true
-}
 
-private fun uploadWaypointMission() { // upload the mission
-    getWaypointMissionOperator()!!.uploadMission { error ->
-        if (error == null) {
-            setResultToToast("Mission upload successfully!")
-        } else {
-            //uncomment for DJI waypoint mission manager
-            //setResultToToast("Mission upload failed, error: " + error.description + " retrying...")
-            //getWaypointMissionOperator()?.retryUploadMission(null)
-        }
-    }
-}
-```
+        headingRG.setOnCheckedChangeListener { _, checkedId -> // changes the heading
 
-Lastly, let's add the `R.id.upload` case checking in the `override onClick()` method:
+            Log.d(TAG, "Select heading")
+            when (checkedId) {
+                R.id.headingNext -> {
+                    headingMode = WaypointMissionHeadingMode.AUTO
+                }
+                R.id.headingInitDirec -> {
+                    headingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION
+                }
+                R.id.headingRC -> {
+                    headingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER
+                }
+                R.id.headingWP -> {
+                    headingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING
+                }
 
-```kotlin
-R.id.upload -> { 
-    // this will upload the mission
-    // to the drone so that it can execute it
-    uploadWaypointMission()
-}
-```
-
-#### 5. Start and Stop Waypoint Mission
-
-Once the mission finish uploading, we can invoke the `startMission()` and `stopMission()` methods of WaypointMissionOperator to implement the start and stop mission features as shown below:
-
-```kotlin
-private fun startWaypointMission() { // start mission
-    getWaypointMissionOperator()?.startMission { error ->
-        setResultToToast("Mission Start: " + if (error == null) "Successfully" else error.description)
-    }
-}
-
-private fun stopWaypointMission() { // stop mission
-    getWaypointMissionOperator()?.stopMission { error ->
-        setResultToToast("Mission Stop: " + if (error == null) "Successfully" else error.description)
-    }
-}
-```
-
-Lastly, let's improve the `override onClick()` method to improve the clear button action and implement the start and stop button actions:
-
-```kotlin
-override fun onClick(v: View?) {
-    when (v?.id) {
-        R.id.locate -> { // will draw the drone and move camera to the position of the drone on the map
-            updateDroneLocation()
-            cameraUpdate()
-        }
-        R.id.add -> { // this will toggle the adding of the waypoints
-            enableDisableAdd()
-        }
-        R.id.clear -> { // clear the waypoints on the map
-            runOnUiThread {
-                mapboxMap?.clear()
             }
         }
-        R.id.config -> { // this will show the settings
-            showSettingsDialog()
-        }
-        R.id.upload -> { // this will upload the mission to the drone so that it can execute it
-            uploadWaypointMission()
-        }
-        R.id.start -> { // this will let the drone start navigating to the waypoints
-            startWaypointMission()
-        }
-        R.id.stop -> { // this will immediately stop the waypoint mission
-            stopWaypointMission()
-        } else -> {}
-    }
-}
-```
-**Only for WaypointsV1** The above code is meant for adding automated flight functionality to DJI mini drones. To fly drones that support automatic waypoints, the following functions can replace their counter parts. The config section will not be functional, except for height and speed, when using the mavic mini code, but will still need information entered in order for missions to be run. The config section will be functional when using DJI's default waypoint mission operator.
-```kotlin
-private fun getWaypointMissionOperator(): WaypointMissionOperator? { // returns the mission operator
-        if (instance == null) {
-            if (DJISDKManager.getInstance().missionControl != null) {
-                instance = DJISDKManager.getInstance().missionControl.waypointMissionOperator
-            }
-        }
-        return instance
+
+        AlertDialog.Builder(this) // creates the dialog
+                .setTitle("")
+                .setView(wayPointSettings)
+                .setPositiveButton("Finish") { dialog, id ->
+                    val altitudeString = wpAltitudeTV.text.toString()
+                    altitude = nullToIntegerDefault(altitudeString).toInt().toFloat()
+                    Log.e(TAG, "altitude $altitude")
+                    Log.e(TAG, "speed $speed")
+                    Log.e(TAG, "mFinishedAction $finishedAction")
+                    Log.e(TAG, "mHeadingMode $headingMode")
+                    configWayPointMission()
+                }
+                .setNegativeButton("Cancel") { dialog, id -> dialog.cancel() }
+                .create()
+                .show()
     }
 
-private fun configWayPointMission() {
+    private fun configWayPointMission() {
         if (waypointMissionBuilder == null) {
             waypointMissionBuilder = WaypointMission.Builder().finishedAction(finishedAction) // initialize the mission builder if null
                     .headingMode(headingMode)
@@ -2054,16 +1491,66 @@ private fun configWayPointMission() {
             }
         }
     }
+    
 
-private fun addListener() {
-        getWaypointMissionOperator()?.addListener(eventNotificationListener)
+    private fun nullToIntegerDefault(value: String): String {
+        var newValue = value
+        if (!isIntValue(newValue)) newValue = "0"
+        return newValue
     }
 
-private fun removeListener() {
-    getWaypointMissionOperator()?.removeListener(eventNotificationListener)
+    private fun isIntValue(value: String): Boolean {
+        try {
+            var newValue = value.replace(" ", "")
+            newValue.toInt()
+        } catch (e: Exception) {
+            return false
+        }
+        return true
+    }
+
+    private fun enableDisableAdd() { // toggle for adding or not
+        if (!isAdd) {
+            isAdd = true
+            add.text = "Exit"
+        } else {
+            isAdd = false
+            add.text = "Add"
+        }
+    }
+
+    private fun cameraUpdate() { // update where you're looking on the map
+        if (droneLocationLat.isNaN() || droneLocationLng.isNaN())  { return }
+        val pos = LatLng(droneLocationLat, droneLocationLng)
+        val zoomLevel = 18.0
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(pos, zoomLevel)
+        mapboxMap?.moveCamera(cameraUpdate)
+    }
+
+    private fun setResultToToast(string: String) {
+        runOnUiThread { Toast.makeText(this, string, Toast.LENGTH_SHORT).show() }
+    }
+
+    private val eventNotificationListener: WaypointMissionOperatorListener = object : WaypointMissionOperatorListener {
+        override fun onDownloadUpdate(downloadEvent: WaypointMissionDownloadEvent) {}
+        override fun onUploadUpdate(uploadEvent: WaypointMissionUploadEvent) {}
+        override fun onExecutionUpdate(executionEvent: WaypointMissionExecutionEvent) {}
+        override fun onExecutionStart() {}
+        override fun onExecutionFinish(error: DJIError?) {
+            setResultToToast("Execution finished: " + if (error == null) "Success!" else error.description)
+        }
+    }
+
+    private fun getWaypointMissionOperator(): WaypointMissionOperator? { // returns the mission operator
+        if (instance == null) {
+            if (DJISDKManager.getInstance().missionControl != null) {
+                instance = DJISDKManager.getInstance().missionControl.waypointMissionOperator
+            }
+        }
+        return instance
+    }
 }
 ```
-
 ### Test Waypoint Mission with DJI Simulator
 
 You've come a long way in this tutorial, and it's time to test the whole application.
