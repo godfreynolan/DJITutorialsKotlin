@@ -1140,6 +1140,8 @@ All that is left is to add the accessory filter file to the project. With this f
 <resources>
     <usb-accessory model="T600" manufacturer="DJI"/>
     <usb-accessory model="AG410" manufacturer="DJI"/>
+    <usb-accessory model="com.dji.logiclink" manufacturer="DJI"/>
+    <usb-accessory model="WM160" manufacturer="DJI"/>
 </resources>
 
 ```
