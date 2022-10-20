@@ -2487,6 +2487,7 @@ Afterwards, open up the `res` folder within there.
 <img src="./images/res_dir.png" width="50%">
 
 Then, copy all the contents within the `raw` folder under `External Libraries` into your local `raw` folder within `res`. If a local `raw` folder has not been created, then create one by `Right Clicking` the `res` folder under `app`. Then `New -> Directory`. and name it `raw` and press `enter`.
+
 <img src="./images/raw_contents.png" width="50%">
 
 Finally, add the `libs` [folder](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/9-VideoDecoder/android-videostreamdecodingsample/libs) to the root of your project.
