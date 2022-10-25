@@ -50,6 +50,9 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
     private val markers: MutableMap<Int, Marker> = ConcurrentHashMap<Int, Marker>()
     private var mapboxMap: MapboxMap? = null
     private var mavicMiniMissionOperator: MavicMiniMissionOperator? = null
+    
+    private val SIMULATED_DRONE_LAT = 42.557965
+    private val SIMULATED_DRONE_LONG = -83.154303
 
     private var altitude = 100f
     private var speed = 10f
@@ -164,6 +167,11 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
     private fun initFlightController() {
         // this will initialize the flight controller with predetermined data
         DJIDemoApplication.getFlightController()?.let { flightController ->
+            flightController.simulator.start(
+                InitializationData.createInstance(LocationCoordinate2D(SIMULATED_DRONE_LAT, SIMULATED_DRONE_LONG), 10, 10)
+            ){ error ->
+                Log.d(TAG, "initFlightController: Error starting simulator: $error")
+            }
             flightController.setStateCallback { flightControllerState ->
                 // set the latitude and longitude of the drone based on aircraft location
                 droneLocationLat = flightControllerState.aircraftLocation.latitude
