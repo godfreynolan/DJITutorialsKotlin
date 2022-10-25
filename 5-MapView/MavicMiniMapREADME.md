@@ -1287,6 +1287,19 @@ class MavicMiniMissionOperator(context: Context) {
 }
 ```
 
+In `MavicMiniMissionOperator.kt` we
+1. Set a listener for the gimbal
+2. Created these drone related functions
+    * take photo
+    * load mission
+    * upload mission
+    * start mission
+    * execute mision
+    * stop mission
+4. Created an observer to check the distance between waypoints
+5. Sent movement commands to the drone
+6. Created a class for handling sending virtual stick commands to the drone
+
 
 #### 3. Creating Waypoint1Activity
 
@@ -1537,6 +1550,9 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
             return latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180 && latitude != 0.0 && longitude != 0.0
         }
     }
+    
+    private val SIMULATED_DRONE_LAT = 42.557965
+    private val SIMULATED_DRONE_LONG = -83.154303
 
     private var isAdd = false
     private var droneLocationLat: Double = 15.0
@@ -1652,6 +1668,13 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
     private fun initFlightController() {
         // this will initialize the flight controller with predetermined data
         DJIDemoApplication.getFlightController()?.let { flightController ->
+            //comment and uncomment the following code block as needed
+            //used for simulating drone in app
+            flightController.simulator.start(
+                InitializationData.createInstance(LocationCoordinate2D(SIMULATED_DRONE_LAT, SIMULATED_DRONE_LONG), 10, 10)
+            ){ error ->
+                Log.d(TAG, "initFlightController: Error starting simulator: $error")
+            }
             flightController.setStateCallback { flightControllerState ->
                 // set the latitude and longitude of the drone based on aircraft location
                 droneLocationLat = flightControllerState.aircraftLocation.latitude
@@ -1871,6 +1894,14 @@ class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnM
     }
 }
 ```
+In `Waypoint1Activity.kt` we
+1. Set the simulator location coordinates in the `SIMULATED_DRONE_LAT` and `SIMULATED_DRONE_LONG` variables.
+2. Registered map clicks for waypoints
+3. Added buttons to send commands or interact with the map
+4. Created waypoint missions
+5. Sent the commands to the drone
+
+
 ### Test Waypoint Mission with DJI Simulator
 
 You've come a long way in this tutorial, and it's time to test the whole application.
