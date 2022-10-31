@@ -8,7 +8,7 @@ In this tutorial, you will learn how to use the MediaManager to interact with th
 
 In order for our app to manage photos and videos, however, it must first be able to take and record them. Fortunately, by using DJI Android UX SDK, you can implement shooting photos and recording videos functionalities easily with standard DJI Go UIs.
 
-You can download the tutorial's final sample project from this [Github Page]([https://github.com/riisinterns/drone-lab-four-media-manager](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager)).
+You can download the tutorial's final sample project from this [Github Page]([[https://github.com/riisinterns/drone-lab-four-media-manager](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager)](https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager)).
 
 ---
 ### Application Activation and Aircraft Binding in China
@@ -2130,32 +2130,32 @@ Please check this [Connect Mobile Device and Run Application](https://developer.
 ### App Demo
 
 #### Connection Activity 
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo.gif" alt="drawing" width="30%" height="30%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo.gif" alt="drawing" width="30%" height="30%"/>
 
 #### Main Activity 
 *    Scrolling through image gallery:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo2.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo2.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Reloading the screen:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo3.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo3.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Pressing the back button:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo4.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo4.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Deleting files:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo5.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo5.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Downloading media:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo6.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo6.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Playing, pausing, and resuming a recorded video:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo7.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo7.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Checking media status:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo8.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo8.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Moving to a different time in a playing video:
-<img src="https://github.com/riisinterns/drone-lab-four-media-manager/blob/master/Images/demo9.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo9.gif" alt="drawing" width="60%" height="60%"/>
 
 ---
 ### Summary
