@@ -2134,28 +2134,29 @@ Please check this [Connect Mobile Device and Run Application](https://developer.
 
 #### Main Activity 
 *    Scrolling through image gallery:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo2.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo2.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Reloading the screen:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo3.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo3.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Pressing the back button:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo4.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo4.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Deleting files:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo5.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo5.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Downloading media:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo6.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo6.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Playing, pausing, and resuming a recorded video:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo7.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo7.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Checking media status:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo8.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo8.gif" alt="drawing" width="60%" height="60%"/>
 
 *    Moving to a different time in a playing video:
-<img src="https://github.com/godfreynolan/DJITutorialsKotlin/tree/main/4-MediaManager/Images/demo9.gif" alt="drawing" width="60%" height="60%"/>
+<img src="https://github.com/godfreynolan/DJITutorialsKotlin/blob/main/4-MediaManager/Images/demo9.gif" alt="drawing" width="60%" height="60%"/>
+
 
 ---
 ### Summary
