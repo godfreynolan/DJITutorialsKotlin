@@ -83,7 +83,7 @@ Specify the permissions of your application needs, by adding `<uses-permission>`
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MapviewDemo"
+        android:theme="@style/Theme.MapViewDemo"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
@@ -1530,6 +1530,9 @@ import dji.sdk.mission.waypoint.WaypointMissionOperator
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener
 import dji.sdk.sdkmanager.DJISDKManager
 import java.util.concurrent.ConcurrentHashMap
+import dji.common.flightcontroller.simulator.InitializationData
+import dji.common.model.LocationCoordinate2D
+import dji.sdk.mission.waypoint.WaypointMissionOperatorListener
 
 
 class Waypoint1Activity : AppCompatActivity(), MapboxMap.OnMapClickListener, OnMapReadyCallback, View.OnClickListener {
